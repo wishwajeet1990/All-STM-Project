@@ -1,0 +1,45 @@
+13:40:04 **** Incremental Build of configuration Debug for project WP_MCU1_Rev1.0 ****
+make -j8 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g -DSTM32 -DSTM32F3 -DSTM32F301C8Tx -DDEBUG -c -I../Inc -I"D:/Abhishek/Projects/Wheel Profile/Work in Progress/MCU1/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Drivers/Src/peripheral.c" -mcpu=cortex-m4 -std=gnu11 -g -DSTM32 -DSTM32F3 -DSTM32F301C8Tx -DDEBUG -c -I../Inc -I"D:/Abhishek/Projects/Wheel Profile/Work in Progress/MCU1/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/Src/peripheral.d" -MT"Drivers/Src/peripheral.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Drivers/Src/peripheral.o"
+../Drivers/Src/peripheral.c: In function 'GPIO_Init':
+../Drivers/Src/peripheral.c:270:11: warning: unused variable 'portcode' [-Wunused-variable]
+   uint8_t portcode = GPIO_BASEADDR_TO_CODE(pGPIOHandle->pGPIOx);
+           ^~~~~~~~
+../Drivers/Src/peripheral.c:269:11: warning: unused variable 'temp2' [-Wunused-variable]
+   uint8_t temp2 = pGPIOHandle->GPIO_PinConfig.pinnumber % 4;
+           ^~~~~
+../Drivers/Src/peripheral.c:268:11: warning: unused variable 'temp1' [-Wunused-variable]
+   uint8_t temp1 = pGPIOHandle->GPIO_PinConfig.pinnumber / 4 ;
+           ^~~~~
+../Src/main.c: In function 'main':
+../Src/main.c:84:2: warning: implicit declaration of function 'sprintf' [-Wimplicit-function-declaration]
+  sprintf(Date,"DATE  %02d/%02d/%02d",sDate.Date,sDate.Month,sDate.Year);
+  ^~~~~~~
+../Src/main.c:84:2: warning: incompatible implicit declaration of built-in function 'sprintf'
+../Src/main.c:84:2: note: include '<stdio.h>' or provide a declaration of 'sprintf'
+../Src/main.c:84:10: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  sprintf(Date,"DATE  %02d/%02d/%02d",sDate.Date,sDate.Month,sDate.Year);
+          ^~~~
+../Src/main.c:84:10: note: expected 'char *' but argument is of type 'uint8_t * {aka unsigned char *}'
+../Src/main.c:95:11: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+   sprintf(Time,"TIME  %02d:%02d:%02d",sTime.Hours,sTime.Minutes,sTime.Seconds);
+           ^~~~
+../Src/main.c:95:11: note: expected 'char *' but argument is of type 'uint8_t * {aka unsigned char *}'
+arm-none-eabi-gcc -o "WP_MCU1_Rev1.0.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\Abhishek\Projects\Wheel Profile\Work in Progress\MCU1\STM32F301C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="WP_MCU1_Rev1.0.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: WP_MCU1_Rev1.0.elf
+ 
+arm-none-eabi-objdump -h -S  WP_MCU1_Rev1.0.elf  > "WP_MCU1_Rev1.0.list"
+arm-none-eabi-objcopy  -O binary  WP_MCU1_Rev1.0.elf  "WP_MCU1_Rev1.0.bin"
+arm-none-eabi-size   WP_MCU1_Rev1.0.elf 
+   text	   data	    bss	    dec	    hex	filename
+   6696	    108	   1892	   8696	   21f8	WP_MCU1_Rev1.0.elf
+Finished building: default.size.stdout
+ 
+Finished building: WP_MCU1_Rev1.0.bin
+Finished building: WP_MCU1_Rev1.0.list
+ 
+ 
+
+13:40:04 Build Finished. 0 errors, 7 warnings. (took 769ms)
+

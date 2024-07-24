@@ -1,0 +1,20 @@
+12:39:28 **** Incremental Build of configuration Debug for project UART_TEST ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F301x8 -DDEBUG -c -I../Core/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "UART_TEST.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\STM32_CubeIDE_Workspace\UART_TEST\STM32F301C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="UART_TEST.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: UART_TEST.elf
+ 
+arm-none-eabi-objdump -h -S  UART_TEST.elf  > "UART_TEST.list"
+arm-none-eabi-objcopy  -O binary  UART_TEST.elf  "UART_TEST.bin"
+arm-none-eabi-size   UART_TEST.elf 
+   text	   data	    bss	    dec	    hex	filename
+  10012	     20	   1716	  11748	   2de4	UART_TEST.elf
+Finished building: default.size.stdout
+ 
+Finished building: UART_TEST.bin
+ 
+Finished building: UART_TEST.list
+ 
+
+12:39:29 Build Finished. 0 errors, 0 warnings. (took 734ms)
+

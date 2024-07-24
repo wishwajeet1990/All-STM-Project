@@ -1,0 +1,296 @@
+/**
+ ******************************************************************************
+ * @file           : main.c
+ * @author         : ABHISHEK KASAUDHAN
+ * @brief          : Main program body
+ * @Date           : 11/12/20
+ ******************************************************************************
+
+
+ ******************************************************************************
+ */
+
+//#include"stm32f301x8.h"
+#include<peripheral.h>
+
+uint16_t g_unCount1;
+uint16_t g_unCount2;
+uint8_t  g_ucTimeOutFlag;
+uint8_t  g_ucRxReadyFlag;
+uint8_t  g_ucReceiveData;
+uint8_t  g_ucRxCount;
+uint8_t  g_ucMB_RxCount2Check = 8;
+uint8_t  ucOneTime = 1;
+
+
+int main(void)
+{
+	Sys_Clock_Config();
+//	Peripheral_IRQInterruptConfig(IRQ_NO_USART1,ENABLE);
+	Init_Gpios();
+//	Init_Timer2();
+//	Init_UART_1();
+	Init_UART_3();
+//	Delay(10000000);
+
+
+//	MB_Connect();
+//	memset(MB_Request_Buff,0,256);
+//	memset(MB_Response_Buff,0,256);
+//	Delay(100000);
+
+
+//	MB_Microstep();
+//	memset(MB_Request_Buff,0,256);
+//	memset(MB_Response_Buff,0,256);
+//	Delay(100000);
+
+
+//	MB_Pitch();
+//	memset(MB_Request_Buff,0,256);
+//	memset(MB_Response_Buff,0,256);
+//	Delay(100000);
+
+
+//	MB_Current();
+//	memset(MB_Request_Buff,0,256);
+//	memset(MB_Response_Buff,0,256);
+//	Delay(100000);
+
+
+//	MB_Acceleration();
+//	memset(MB_Request_Buff,0,256);
+//	memset(MB_Response_Buff,0,256);
+//	Delay(100000);
+
+
+//	MB_DeAcceleration();
+//	memset(MB_Request_Buff,0,256);
+//	memset(MB_Response_Buff,0,256);
+//	Delay(100000);
+
+
+//	memset(MB_Request_Buff,0,256);
+//	memset(MB_Response_Buff,0,256);
+//	Move_Clockwise_120_mm();
+//	Delay(100000);
+
+//	memset(MB_Request_Buff,0,256);
+//	memset(MB_Response_Buff,0,256);
+//	Move_AntClockwise_120_mm();
+//	Delay(100000);
+
+//	GPIO_IRQPriorityConfig(IRQ_NO_EXTI15_10,NVIC_IRQ_PRI15);
+//	GPIO_IRQPriorityConfig(IRQ_NO_USART1,NVIC_IRQ_PRI0);
+//	GPIO_IRQInterruptConfig(IRQ_NO_USART1,ENABLE);
+
+//	uint8_t ucData;
+//	GPIO_WriteToOutputPin(GPIOB,GPIO_PIN_NO_2,0);
+//	Delay(100);
+    /* Loop forever */
+	while(1)
+	{
+
+
+//		if(g_ucRxReadyFlag)
+//		{
+//			g_ucRxReadyFlag = 0;
+//			GPIO_WriteToOutputPin(GPIOA,GPIO_PIN_NO_11,0);
+//			Delay(10);
+//			Uart_1_Send_String(MB_Response_Buff,9);
+//		}
+//		if(!g_ucRxReadyFlag)
+//		{
+//			GPIO_WriteToOutputPin(GPIOA,GPIO_PIN_NO_11,1);
+//		}
+
+//		MB_Connect();
+//		Delay(10000000);
+//		GPIO_WriteToOutputPin(GPIOA,GPIO_PIN_NO_11,0);
+//		Delay_ms(1000);
+//		Uart_1_Send_String((uint8_t*)("Hello\n"),6);
+
+//		if(ucOneTime)
+//		{
+//			ucOneTime = 0;
+//			memset(MB_Request_Buff,0,256);
+//			memset(MB_Response_Buff,0,256);
+//			Move_AntClockwise_120_mm();
+//			Delay(100000);
+//		}
+//			MB_Connect();
+////			if(g_ucRxReadyFlag)
+////			{
+////				g_ucRxReadyFlag = 0;
+//				memset(MB_Request_Buff,0,256);
+//				memset(MB_Response_Buff,0,256);
+//				MB_Microstep();
+////				if(g_ucRxReadyFlag)
+////				{
+////					g_ucRxReadyFlag = 0;
+//					memset(MB_Request_Buff,0,256);
+//					memset(MB_Response_Buff,0,256);
+//					MB_Pitch();
+////					if(g_ucRxReadyFlag)
+////					{
+////						g_ucRxReadyFlag = 0;
+//						memset(MB_Request_Buff,0,256);
+//						memset(MB_Response_Buff,0,256);
+//						MB_Current();
+////						if(g_ucRxReadyFlag)
+////						{
+////							g_ucRxReadyFlag = 0;
+//							memset(MB_Request_Buff,0,256);
+//							memset(MB_Response_Buff,0,256);
+//							MB_Acceleration();
+////							if(g_ucRxReadyFlag)
+////							{
+////								g_ucRxReadyFlag = 0;
+//								memset(MB_Request_Buff,0,256);
+//								memset(MB_Response_Buff,0,256);
+//								MB_DeAcceleration();
+//							}
+//						}
+//					}
+//				}
+//			}
+
+//		}
+//		memset(MB_Request_Buff,0,256);
+//		memset(MB_Response_Buff,0,256);
+//		Move_Clockwise_120_mm();
+//		Delay(100000000);
+//		memset(MB_Request_Buff,0,256);
+//		memset(MB_Response_Buff,0,256);
+//		Move_AntClockwise_120_mm();
+//		Delay(100000000);
+//		MB_Microstep();
+//		MB_Pitch();
+//		MB_Current();
+//		MB_Acceleration();
+//		MB_DeAcceleration();
+
+//		Delay(10000000);
+
+//		if(g_ucRxReadyFlag)
+//		{
+//			g_ucRxReadyFlag = 0;
+//			GPIO_WriteToOutputPin(GPIOA,GPIO_PIN_NO_11,0);
+//			Delay(10);
+//			Uart_1_Send_Char(g_ucReceiveData);                    //Send received data
+//			Uart_1_Send_Char('\t');
+//			GPIO_WriteToOutputPin(GPIOA,GPIO_PIN_NO_11,1);
+//			Delay(10);
+
+
+//
+//			GPIO_WriteToOutputPin(GPIOB,GPIO_PIN_NO_2,0);
+//			Delay(100);
+//			Uart_3_Send_Char('A');
+//			Uart_3_Send_String((uint8_t*)("Hello\n"),6);
+//			Delay(10);
+//			GPIO_WriteToOutputPin(GPIOA,GPIO_PIN_NO_11,1);
+//			Delay(10000000);
+//		}
+
+
+//		GPIO_WriteToOutputPin(GPIOA,GPIO_PIN_NO_11,1);
+//		ucData = Uart_1_Get_Char();
+//		GPIO_WriteToOutputPin(GPIOA,GPIO_PIN_NO_11,0);
+//		Uart_1_Send_Char(ucData);
+//		Uart_1_Send_Char('h');
+
+
+
+//		Uart_1_Send_Char('\n');
+//		Uart_1_Send_String((uint8_t*)("Hello from UART1 via RS-485\n"));
+//		Delay_ms(500);
+//		Delay(10000000);
+
+//		if(g_ucTimeOutFlag)
+//		{
+//			g_ucTimeOutFlag = 0;
+//			g_unCount2++;
+//			if(g_unCount2 >= 1000)
+//			{
+//				GPIO_ToggleOutputPin(GPIOA,GPIO_PIN_NO_7);
+//				Delay_ms(1000);
+//				g_unCount2 = 0;
+//			}
+//
+//		}
+
+	}
+}
+
+
+void EXTI15_10_IRQ_IRQHandler(void)
+{
+//    Delay_ms(200); //200ms . wait till button de-bouncing gets over
+	GPIO_IRQHandling(GPIO_PIN_NO_15); //clear the pending event from exti line
+	GPIO_ToggleOutputPin(GPIOA,GPIO_PIN_NO_6);
+}
+
+
+void TIM2_IRQHandler(void)
+{
+	if ((TIM2->SR & 0x0001))
+	{
+		TIM2->SR &= ~(1<<0); 		//reset the update interrupt flag
+		g_unCount1++;
+		if(g_unCount1 >= 1000)
+		{
+			g_unCount1 = 0;
+			g_ucTimeOutFlag = 1;
+		}
+	}
+}
+
+
+void USART1_IRQ_IRQHandler(void)
+{
+	if(USART1->ISR & (1<<5))          //RX buffer not empty
+	{
+		g_ucReceiveData = (0xFF & USART1->RDR);        //Read data from data register
+
+		if(g_ucReceiveData == 0x39)
+		{
+			MB_Response_Buff[g_ucRxCount] = g_ucReceiveData;
+			g_ucRxCount = 0;
+			g_ucRxReadyFlag = 1;
+		}
+		else
+		{
+			MB_Response_Buff[g_ucRxCount++] = g_ucReceiveData;
+		}
+
+		USART1->ISR &= ~(1<<5);
+
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+/****************************GARBAGE********************
+ *
+ *	GPIOA->MODER |= (1<<10); //O/P mode
+	GPIOA->OTYPER &= ~(1<<5);//push_pull
+	GPIOA->OSPEEDR |= (1<<10); //High speed
+	GPIOA->PUPDR &= ~((1<<10) | (1<<11));
+
+	GPIOA->BSRR |= (1<<5); // Set the Pin PA5
+	Delay (1000000);  // random delay
+	GPIOA->BSRR |= (1<<5) <<16;  // Clear the Pin PA5
+	Delay (1000000);  // random delay
+ *
+ *
+ ******************************************************/

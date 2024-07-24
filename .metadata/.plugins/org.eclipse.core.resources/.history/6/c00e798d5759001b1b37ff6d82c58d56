@@ -1,0 +1,715 @@
+/**
+ ******************************************************************************
+ * @file           : main.c
+ * @author         : ABHISHEK KASAUDHAN
+ * @brief          : Main program body
+ * @Date           : 11/12/20
+ ******************************************************************************
+
+
+ ******************************************************************************
+ */
+
+//#include"stm32f301x8.h"
+#include<peripheral.h>
+
+uint16_t g_unCount1 = 1;
+uint16_t g_unCount2 = 1;
+uint8_t  g_ucShutterOpenFlag  ;
+uint8_t  g_ucShutterCloseFlag  ;
+
+
+uint8_t  Time[15],Date[15] ;
+RTC_TimeTypeDef sTime = {0};
+RTC_DateTypeDef sDate = {0};
+
+
+uint8_t  g_ucLS_State_Open  ;
+uint8_t  g_ucLS_State_Close ;
+uint8_t  ucOneTime = 1;
+uint8_t  ucFan3_State ;
+uint8_t  ucFan4_State ;
+
+
+
+uint8_t  g_ucRxReadyFlag;
+uint8_t g_ucFan_Select_Flag;
+uint8_t g_ucAxleCount_W1;
+uint8_t g_ucAxleCount_W2;
+uint8_t g_ucCheckDirection = 1;
+uint8_t g_ucDirection_W1_to_W2_Flag;
+uint8_t g_ucDirection_W2_to_W1_Flag;
+uint8_t g_ucOpenShutter_Flag;
+uint8_t g_ucCloseShutter_Flag;
+uint8_t g_ucUART1_RxData;
+uint8_t g_ucUART1_RxBuff[50];
+uint8_t g_ucRxCount;
+uint8_t g_ucRxReadyFlag;
+uint8_t g_ucTrainLeft_Flag;
+uint8_t g_uc60_Min_Flag;
+uint8_t g_uc60_Min_Counter;
+uint8_t g_uc10_Min_Counter;
+uint8_t g_uc10_Min_Flag;
+uint8_t g_ucFloat_Sensor_Value;
+uint8_t g_ucFloat_Aiarm_Counter;
+
+void Test_Open_Shutters(void);
+
+int main(void)
+{
+	Sys_Clock_Config();
+	//Peripheral_IRQInterruptConfig(IRQ_NO_TIM2,ENABLE);
+	Init_Gpios();
+//	Set_InterruptPriority(IRQ_NO_EXTI15_10,0,0);
+	Peripheral_IRQPriorityConfig(IRQ_NO_EXTI15_10,0);
+	*NVIC_ISER1 |= ( 1 << (IRQ_NO_EXTI15_10 % 32));
+//	Peripheral_IRQInterruptConfig(IRQ_NO_EXTI15_10,ENABLE);
+//	Peripheral_IRQInterruptConfig(IRQ_NO_EXTI9_5,ENABLE);
+//	Init_Timer2();
+//	Init_Timer6();
+//	Init_Timer15();
+//	Init_UART_3();
+//	Delay(5);
+//	Init_RTCC();
+//	Delay(500);
+
+
+	Delay(500);
+//	Get_Date(&sDate);
+//
+//
+//	sprintf(Date,"DATE  %02d/%02d/%02d",sDate.Date,sDate.Month,sDate.Year);
+//	GPIO_WriteToOutputPin(GPIOB,GPIO_PIN_NO_2,0);
+//	Delay(5);
+	while(1)
+	{
+/**************************************************************************************/
+//		Uart_3_Send_String(Date , 14);
+//		Uart_3_Send_Char('\t');
+//		Get_Time(&sTime);
+//		sprintf(Time,"TIME  %02d:%02d:%02d",sTime.Hours,sTime.Minutes,sTime.Seconds);
+//		Uart_3_Send_String(Time , 14);
+//		Uart_3_Send_Char('\n');
+//
+//		Delay(10000000);
+
+
+
+
+
+/*
+		if(ucOneTime)
+		{
+			ucOneTime = CLEAR;
+			Test_Open_Shutters();
+			TIM15_Delay_Ms(5000);
+			TIM15_Delay_Ms(5000);
+			g_ucShutterOpenFlag = 1;
+		}
+
+//		g_ucLS_State_Close = GPIO_ReadFromInputPin(GPIOA,MONOBLOCK1_CLOSE_FB);
+
+		if((!GPIO_ReadFromInputPin(GPIOA,MONOBLOCK1_CLOSE_FB))  && g_ucShutterOpenFlag == 1)
+		{
+//			Move_Clockwise_120mm(0x01);
+			Move_Clockwise_10mm(0x03);
+			TIM15_Delay_Ms(5000);
+//			Move_AntiClockwise_120mm(0x03);
+//			TIM15_Delay_Ms(5000);
+		}
+
+		if(GPIO_ReadFromInputPin(GPIOA,MONOBLOCK1_CLOSE_FB) == 1)
+		{
+			Move_AntiClockwise_120mm(0x03);
+			g_ucShutterOpenFlag  = 0;
+
+			TIM15_Delay_Ms(5000);
+		    TIM15_Delay_Ms(5000);
+		    g_ucShutterCloseFlag = 1;
+		}
+
+		if((!GPIO_ReadFromInputPin(GPIOC,MONOBLOCK1_OPEN_FB))  && g_ucShutterCloseFlag == 1)
+		{
+			Move_AntiClockwise_10mm(0x03);
+			TIM15_Delay_Ms(5000);
+		}
+
+		*/
+
+
+//		g_unCount1 = GPIO_ReadFromInputPin(GPIOB,MONOBLOCK8_OPEN_FB);
+//		Delay(1000);
+//		g_unCount2 = GPIO_ReadFromInputPin(GPIOC,MONOBLOCK8_CLOSE_FB);
+//		Delay(1000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//		if(ucOneTime)
+//		{
+//			ucOneTime = CLEAR;
+//			GPIO_WriteToOutputPin(GPIOB,FAN2_OUT,0);
+//		ucFan3_State = GPIO_ReadFromInputPin(GPIOB,FAN3_FEEDBACK);
+//		Delay(10000);
+//		ucFan4_State = GPIO_ReadFromInputPin(GPIOB,FAN4_FEEDBACK);
+//		Delay(10000);
+
+
+//			if(g_unCount1 >1)
+//			{
+//				GPIO_WriteToOutputPin(GPIOB,FAN2_OUT,1);
+//				g_unCount1 = 0;
+//			}
+
+
+
+//		GPIO_WriteToOutputPin(GPIOA,GPIO_PIN_NO_2,1);
+//		Delay_Sec(1);
+//		GPIO_WriteToOutputPin(GPIOA,GPIO_PIN_NO_2,0);
+//		Delay_Sec(1);
+
+
+
+//		g_ucLS_State_Open = GPIO_ReadFromInputPin(GPIOC,MONOBLOCK1_OPEN_FB);
+//		Delay(1000000);
+//		g_ucLS_State_Close = GPIO_ReadFromInputPin(GPIOA,MONOBLOCK1_CLOSE_FB);
+//		Delay(1000000);
+
+
+//		MB_Connect(0x03);
+//		Delay(100000000);
+
+//		g_ucLS_State_Open = GPIO_ReadFromInputPin(GPIOC,MONOBLOCK1_OPEN_FB);
+//		if(!g_ucLS_State_Open)
+//		{
+////			Move_Clockwise_120mm(0x01);
+//			Move_Clockwise_10mm(0x03);
+//
+//		}
+//		g_ucLS_State_Close = GPIO_ReadFromInputPin(GPIOC,MONOBLOCK1_CLOSE_FB);
+//		if(!g_ucLS_State_Open)
+//		{
+////			Move_AntiClockwise_120mm(0x01);
+//			Move_AntiClockwise_10mm(0x03);
+//		}
+
+//		MB_Disconnect(0x01);
+//		Open_Shutters();
+
+//		GPIO_WriteToOutputPin(GPIOA,GPIO_PIN_NO_2,1);
+//		TIM15_Delay_Ms(1);
+//		GPIO_WriteToOutputPin(GPIOA,GPIO_PIN_NO_2,0);
+//		TIM15_Delay_Ms(1);
+
+//		GPIO_ToggleOutputPin(GPIOA,GPIO_PIN_NO_2);
+//		Delay_us(1);
+
+//		MB_Connect(0x01);
+//		Delay(10000000);
+//		MB_Disconnect(0x01);
+//		Delay(10000000);
+//		MB_Microstep(0x01);
+//		Delay(10000000);
+//		MB_Pitch(0x01);
+//		Delay(10000000);
+//		MB_Current(0x01);
+//		Delay(10000000);
+//		MB_Acceleration(0x01);
+//		Delay(10000000);
+//		MB_DeAcceleration(0x01);
+//		Delay(10000000);
+//		Move_Clockwise_120mm(0x01);
+//		Delay(10000000);
+//		Move_AntiClockwise_120mm(0x01);
+//		Delay(10000000);
+
+//			GPIO_WriteToOutputPin(GPIOA,GPIO_PIN_NO_11,0);
+//			Delay(10);
+//			Uart_1_Send_String((uint8_t*)"Hello\n",6);
+////			GPIO_WriteToOutputPin(GPIOA,GPIO_PIN_NO_11,1);
+//			Delay(10000000);
+/**************************************************************************************/
+
+		/*
+		if((g_ucDirection_W1_to_W2_Flag && (!g_ucDirection_W2_to_W1_Flag)) || (g_ucDirection_W2_to_W1_Flag && (!g_ucDirection_W1_to_W2_Flag)))
+		{
+			g_ucDirection_W1_to_W2_Flag = 0;
+			g_ucDirection_W2_to_W1_Flag = 0;
+
+			g_ucCheckDirection = 0; //This Flag need to be set after train has gone condition
+			GPIO_WriteToOutputPin(GPIOB,PURGE_OUT,CLEAR);
+
+			// Send Start grab command to ABOX 5200
+			//$,MCU2,ABOX1,STARTGRAB,#
+			GPIO_WriteToOutputPin(GPIOA,RS485_CON2,CLEAR);
+			//Add Delay of 1us
+			Uart_1_Send_String((uint8_t*)"$,MCU2,ABOX1,STARTGRAB,#",24);
+			//Add Delay of 1us
+			GPIO_WriteToOutputPin(GPIOA,RS485_CON2,SET);
+			//Add Delay of 1us
+			while(!g_ucRxReadyFlag);
+
+			GPIO_WriteToOutputPin(GPIOB,PURGE_OUT,SET);
+
+			Open_Shutters();
+			//Delay 7 Second
+			if(GPIO_ReadFromInputPin(GPIOC,MONOBLOCK1_OPEN_FB) == SET)
+			{
+				while(GPIO_ReadFromInputPin(GPIOC,MONOBLOCK1_OPEN_FB) == CLEAR)
+				{
+					//Send move command for 10mm movement
+					//Delay
+				}
+			}
+			if(GPIO_ReadFromInputPin(GPIOA,MONOBLOCK2_OPEN_FB) == SET)
+			{
+				while(GPIO_ReadFromInputPin(GPIOA,MONOBLOCK2_OPEN_FB) == CLEAR)
+				{
+					//Send move command for 10mm movement
+					//Delay
+				}
+			}
+			if(GPIO_ReadFromInputPin(GPIOB,MONOBLOCK3_OPEN_FB) == SET)
+			{
+				while(GPIO_ReadFromInputPin(GPIOB,MONOBLOCK3_OPEN_FB) == CLEAR)
+				{
+					//Send move command for 10mm movement
+					//Delay
+				}
+			}
+			if(GPIO_ReadFromInputPin(GPIOB,MONOBLOCK4_OPEN_FB) == SET)
+			{
+				while(GPIO_ReadFromInputPin(GPIOB,MONOBLOCK4_OPEN_FB) == CLEAR)
+				{
+					//Send move command for 10mm movement
+					//Delay
+				}
+			}
+			if(GPIO_ReadFromInputPin(GPIOB,MONOBLOCK5_OPEN_FB) == SET)
+			{
+				while(GPIO_ReadFromInputPin(GPIOB,MONOBLOCK5_OPEN_FB) == CLEAR)
+				{
+					//Send move command for 10mm movement
+					//Delay
+				}
+			}
+			if(GPIO_ReadFromInputPin(GPIOB,MONOBLOCK6_OPEN_FB) == SET)
+			{
+				while(GPIO_ReadFromInputPin(GPIOB,MONOBLOCK6_OPEN_FB) == CLEAR)
+				{
+					//Send move command for 10mm movement
+					//Delay
+				}
+			}
+			if(GPIO_ReadFromInputPin(GPIOA,MONOBLOCK7_OPEN_FB) == SET)
+			{
+				while(GPIO_ReadFromInputPin(GPIOA,MONOBLOCK7_OPEN_FB) == CLEAR)
+				{
+					//Send move command for 10mm movement
+					//Delay
+				}
+			}
+			if(GPIO_ReadFromInputPin(GPIOB,MONOBLOCK8_OPEN_FB) == SET)
+			{
+				while(GPIO_ReadFromInputPin(GPIOB,MONOBLOCK8_OPEN_FB) == CLEAR)
+				{
+					//Send move command for 10mm movement
+					//Delay
+				}
+			}
+
+		}
+		*/
+
+		/****************************************Train Left Condition****************************************/
+
+		/*
+		if((g_ucAxleCount_W1 == g_ucAxleCount_W2) && (g_ucAxleCount_W1 != 0) && (g_ucAxleCount_W2 != 0))
+		{
+			g_ucTrainLeft_Flag = SET;
+			g_ucAxleCount_W1 = 0;
+			g_ucAxleCount_W2 = 0;
+			// Send Shutter Close command
+
+			GPIO_WriteToOutputPin(GPIOB,PURGE_OUT,CLEAR);
+
+			// Send Start grab command to ABOX 5200
+			//$,MCU2,ABOX1,STOPGRAB,#
+			GPIO_WriteToOutputPin(GPIOA,RS485_CON2,CLEAR);
+			//Add Delay of 1us
+			Uart_1_Send_String((uint8_t*)"$,MCU2,ABOX1,STOPGRAB,#",23);
+
+			GPIO_WriteToOutputPin(GPIOA,RS485_CON2,SET);
+			//Add Delay of 1us
+
+			while(!g_ucRxReadyFlag);//Wait for Acknowledgment
+
+			g_ucCheckDirection = SET;
+
+		}
+
+		*/
+		/***************************************************************************************************/
+
+		/*************************Fan Switching @ every 1 Hour************************/
+
+		/*
+		if(g_uc60_Min_Flag)
+		{
+			g_uc60_Min_Flag = CLEAR;
+			if(!g_ucFan_Select_Flag)
+			{
+				GPIO_WriteToOutputPin(GPIOB,FAN1_OUT,CLEAR);
+				GPIO_WriteToOutputPin(GPIOB,FAN2_OUT,SET);
+				g_ucFan_Select_Flag = SET;
+			}
+			else
+			{
+				GPIO_WriteToOutputPin(GPIOB,FAN1_OUT,SET);
+				GPIO_WriteToOutputPin(GPIOB,FAN2_OUT,CLEAR);
+				g_ucFan_Select_Flag = CLEAR;
+			}
+		}
+
+		*/
+		/*****************************************************************************/
+
+		/**************************Check for Float Sensor Data************************/
+
+		/*
+		if(g_uc10_Min_Flag)
+		{
+			g_uc10_Min_Flag = CLEAR;
+			for(uint8_t ucIndex =0; ucIndex < 10; ucIndex++)
+			{
+				g_ucFloat_Sensor_Value = GPIO_ReadFromInputPin(GPIOC, FLOAT_SENSOR);
+				if(g_ucFloat_Sensor_Value == SET)
+				{
+					g_ucFloat_Aiarm_Counter++;
+				}
+			}
+
+			if(g_ucFloat_Aiarm_Counter == 10)
+			{
+
+				GPIO_WriteToOutputPin(GPIOA,RS485_CON2,CLEAR);
+				//Delay 1us
+				//Send Float alarm to ABOX1 over RS-485
+				Uart_1_Send_String((uint8_t*)"$,MCU2,ABOX1,FLOOD,#",20);
+				GPIO_WriteToOutputPin(GPIOA,RS485_CON2,SET);
+				//Delay 1us
+				//Wait for reply
+
+				GPIO_WriteToOutputPin(GPIOA,RS485_CON2,CLEAR);
+				//Delay 1us
+				//Send Float alarm to MCU1 over RS-485
+				Uart_1_Send_String((uint8_t*)"$,MCU2,MCU1,FLOOD,#",19);
+				GPIO_WriteToOutputPin(GPIOA,RS485_CON2,SET);
+				//Delay 1us
+				//Wait for reply
+
+				GPIO_WriteToOutputPin(GPIOA,RS485_CON2,CLEAR);
+				//Delay 1us
+				//Send Float alarm to MCU3 over RS-485
+				Uart_1_Send_String((uint8_t*)"$,MCU2,MCU3,FLOOD,#",19);
+				GPIO_WriteToOutputPin(GPIOA,RS485_CON2,SET);
+				//Delay 1us
+				//Wait for reply
+			}
+		}
+
+
+*/
+		/*****************************************************************************/
+
+
+
+	}
+
+
+}
+
+void Test_Open_Shutters(void)
+{
+	 Delay(COUNT);
+
+	 MB_Connect(0x03);
+//	 Delay(COUNT);
+//	 while(!g_ucRxReadyFlag)
+//	 {
+//		 MB_Connect(0x01);
+//		 Delay(COUNT);
+//	 }
+//	 if(g_ucRxReadyFlag)
+//	 {
+//		 Peripheral_IRQInterruptConfig(IRQ_NO_USART1,0);
+//		 g_ucRxReadyFlag = 0;
+		 Delay(COUNT);
+
+		 if(g_ucRxReadyFlag)
+		 {
+			 g_ucRxReadyFlag = 0;
+			 MB_Microstep(0x03);
+			 Delay(COUNT);
+
+			 MB_Pitch(0x03);
+			 Delay(COUNT);
+
+			 MB_Current(0x03);
+			 Delay(COUNT);
+
+			 MB_Acceleration(0x03);
+			 Delay(COUNT);
+
+			 MB_DeAcceleration(0x03);
+			 Delay(COUNT);
+
+
+			 Move_Clockwise_120mm(0x03);
+	 //		 Move_AntiClockwise_120mm(0x01);
+			 Delay(COUNT);
+
+
+
+		 }
+
+//	 }
+
+}
+
+
+
+
+
+
+
+
+/*********************************ISR HANDLERS*************************************/
+
+
+/********************************FAN1 F/B HANDLER**********************************/
+void EXTI0_IRQ_IRQHandler(void)
+{
+	if(EXTI->PR & (1 << FAN1_FEEDBACK))
+	{
+		//clear the EXTI PR register corresponding to the pin number by writing 1
+		EXTI->PR |= (1 << FAN1_FEEDBACK);
+
+	}
+
+}
+
+/*********************************************************************************/
+
+/****************************FAN 3 & 5 F/B HANDLER*******************************/
+
+void EXTI15_10_IRQ_IRQHandler(void)
+{
+	if(EXTI->PR & ( 1 << W1_TRIGGER))
+	{
+		//Clear the EXTI PR register corresponding to the pin number by writing 1
+		EXTI->PR |= (1 << W1_TRIGGER);
+	}
+	else if(EXTI->PR & ( 1 << W2_TRIGGER))
+	{
+		//Clear the EXTI PR register corresponding to the pin number by writing 1
+		EXTI->PR |= (1 << W2_TRIGGER);
+	}
+	else if(EXTI->PR & ( 1 << T1_TRIGGER))
+	{
+		//Clear the EXTI PR register corresponding to the pin number by writing 1
+		EXTI->PR |= (1 << T1_TRIGGER);
+	}
+	else if(EXTI->PR & ( 1 << T2_TRIGGER))
+	{
+		//Clear the EXTI PR register corresponding to the pin number by writing 1
+		EXTI->PR |= (1 << T2_TRIGGER);
+	}
+
+}
+/*********************************************************************************/
+
+
+/**********************FAN2 F/B & WAKEUP TRIGGER HANDLER**************************/
+void EXTI5_9_IRQ_IRQHandler(void)
+{
+	if(EXTI->PR & ( 1 << W1_TRIGGER))
+	{
+		//Clear the EXTI PR register corresponding to the pin number by writing 1
+		EXTI->PR |= (1 << W1_TRIGGER);
+		g_ucAxleCount_W1++;
+		if(g_ucCheckDirection)
+		{
+			if((g_ucAxleCount_W1 > 0) && (!g_ucAxleCount_W2))
+			{
+				g_ucDirection_W1_to_W2_Flag = 1;
+			}
+		}
+
+	}
+	else if(EXTI->PR & ( 1 << W2_TRIGGER))
+	{
+		//Clear the EXTI PR register corresponding to the pin number by writing 1
+		EXTI->PR |= (1 << W2_TRIGGER);
+		g_ucAxleCount_W2++;
+		if(g_ucCheckDirection)
+		{
+			if((g_ucAxleCount_W2 > 0) && (!g_ucAxleCount_W1))
+			{
+				g_ucDirection_W2_to_W1_Flag = 1;
+			}
+		}
+	}
+	else if(EXTI->PR & ( 1 << FAN2_FEEDBACK))
+	{
+		//Clear the EXTI PR register corresponding to the pin number by writing 1
+		EXTI->PR |= (1 << FAN2_FEEDBACK);
+
+	}
+}
+
+/*********************************************************************************/
+
+void TIM2_IRQHandler(void)
+{
+	if ((TIM2->SR & 0x0001))
+	{
+		TIM2->SR &= ~(1<<0); 		//reset the update interrupt flag
+		GPIO_ToggleOutputPin(GPIOA,GPIO_PIN_NO_2);
+//		g_unCount1++;
+//		if(g_unCount1 >= 1000)
+//		{
+//			g_unCount1 = 0;
+//			g_ucTimeOutFlag = 1;
+//		}
+	}
+}
+
+
+void TIM6_DAC1_IRQHandler(void)
+{
+	if ((TIM6->SR & 0x0001))
+	{
+		GPIO_ToggleOutputPin(GPIOA,GPIO_PIN_NO_2);
+		TIM6->SR &= ~(1<<0); 		//reset the update interrupt flag
+		g_uc60_Min_Counter ++;
+		g_uc10_Min_Counter ++;
+
+		if(g_uc60_Min_Counter >= 3600)
+		{
+			g_uc60_Min_Counter = 0;
+			g_uc60_Min_Flag = SET;
+		}
+
+		if(g_uc10_Min_Counter >= 600)
+		{
+			g_uc10_Min_Counter = 0;
+			g_uc10_Min_Flag = SET;
+		}
+
+//		GPIO_ToggleOutputPin(GPIOA,GPIO_PIN_NO_2);
+	}
+}
+
+void TIM15_IRQ_IRQHandler(void)
+{
+	if ((TIM15->SR & 0x0001))
+	{
+		if(g_ucMilli_Sec_DelayFlag)
+		{
+			g_unMSDelayCnt--;
+			if(g_unMSDelayCnt == 0)
+			{
+				g_ucMilli_Sec_DelayFlag = CLEAR;
+			}
+		}
+		TIM15->SR &= ~(1<<0); 		//reset the update interrupt flag
+//		GPIO_ToggleOutputPin(GPIOA,GPIO_PIN_NO_2);
+	}
+}
+
+void USART1_IRQ_IRQHandler(void)
+{
+	if(USART1->ISR & (1<<5))                           //RX buffer not empty
+	{
+		USART1->ISR &= ~(1<<5);                        //Clear Interrupt flag
+		g_ucUART1_RxData = (0xFF & USART1->RDR);       //Read data from data register
+
+		if(g_ucUART1_RxData == '#' || g_ucUART1_RxData == 0xE8)
+		{
+			g_ucUART1_RxBuff[g_ucRxCount] = g_ucUART1_RxData;
+			g_ucRxCount = 0;
+			g_ucRxReadyFlag = 1;
+		}
+		else
+		{
+			g_ucUART1_RxBuff[g_ucRxCount++] = g_ucUART1_RxData;
+		}
+	}
+}
+
+
+
+//void USART3_IRQ_IRQHandler(void)
+//{
+//	if(USART3->ISR & (1<<5))
+//	{
+//		g_ucReceiveData = (0xFF & USART3->RDR);        //Read data from data register
+//
+//		if(g_ucReceiveData == '\r')
+//		{
+//			MB_Response_Buff[g_ucRxCount] = g_ucReceiveData;
+//			g_ucRxCount = 0;
+//			g_ucRxReadyFlag = 1;
+//		}
+//		else
+//		{
+//			MB_Response_Buff[g_ucRxCount++] = g_ucReceiveData;
+//		}
+//
+//		USART3->ISR &= ~(1<<5);
+//	}
+//}
+
+
+/*********************************************************************************/
+
+
+/*********************************************************************************/
+/* Note: if the debugger GDB server returns error back to you over and over.
+ * Then, don’t try starting the debug session again. Until you move the BOOT0 pin
+ *  jumper from 0 to logic 1. Then try debugging again, it should work just as
+ *  fine. But don’t forget to set the BOOT0 pin back to 0 so it starts your
+ *  application on start-up after restarting the microcontroller.*/
+/*********************************************************************************/
+
+
+
+
+/****************************GARBAGE********************
+ *
+ *	GPIOA->MODER |= (1<<10); //O/P mode
+	GPIOA->OTYPER &= ~(1<<5);//push_pull
+	GPIOA->OSPEEDR |= (1<<10); //High speed
+	GPIOA->PUPDR &= ~((1<<10) | (1<<11));
+
+	GPIOA->BSRR |= (1<<5); // Set the Pin PA5
+	Delay (1000000);  // random delay
+	GPIOA->BSRR |= (1<<5) <<16;  // Clear the Pin PA5
+	Delay (1000000);  // random delay
+ *
+ *
+ ******************************************************/

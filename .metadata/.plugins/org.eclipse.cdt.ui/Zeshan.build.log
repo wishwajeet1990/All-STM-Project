@@ -1,0 +1,10 @@
+14:55:46 **** Incremental Build of configuration Release for project Zeshan ****
+make -j8 all 
+arm-none-eabi-size  Zeshan.elf 
+   text	   data	    bss	    dec	    hex	filename
+   3572	     20	   1572	   5164	   142c	Zeshan.elf
+Finished building: default.size.stdout
+ 
+
+14:55:46 Build Finished. 0 errors, 0 warnings. (took 312ms)
+

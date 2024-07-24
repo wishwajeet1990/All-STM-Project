@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;WP_MCU1_Rev1.0&apos; to &apos;WP_MCU2_Rev1.0&apos;" description="Rename resource &apos;WP_MCU1_Rev1.0&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/WP_MCU1_Rev1.0" name="WP_MCU2_Rev1.0" stamp="1609132566964" updateReferences="true"/>
+</session>

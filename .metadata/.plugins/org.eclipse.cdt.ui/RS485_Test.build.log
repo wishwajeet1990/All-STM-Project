@@ -1,0 +1,31 @@
+16:08:59 **** Incremental Build of configuration Debug for project RS485_Test ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F301x8 -DDEBUG -c -I../Core/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:101:31: warning: pointer targets in passing argument 2 of 'HAL_UART_Transmit' differ in signedness [-Wpointer-sign]
+    HAL_UART_Transmit(&huart1, "Hello\n", 6, 10);
+                               ^~~~~~~~~
+In file included from ../Core/Inc/stm32f3xx_hal_conf.h:326:0,
+                 from ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h:30,
+                 from ../Core/Inc/main.h:31,
+                 from ../Core/Src/main.c:21:
+../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_uart.h:1462:19: note: expected 'uint8_t * {aka unsigned char *}' but argument is of type 'char *'
+ HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout);
+                   ^~~~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "RS485_Test.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\STM32_CubeIDE_Workspace\RS485_Test\STM32F301C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="RS485_Test.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: RS485_Test.elf
+ 
+arm-none-eabi-objdump -h -S  RS485_Test.elf  > "RS485_Test.list"
+arm-none-eabi-objcopy  -O binary  RS485_Test.elf  "RS485_Test.bin"
+arm-none-eabi-size   RS485_Test.elf 
+   text	   data	    bss	    dec	    hex	filename
+  10376	     20	   1700	  12096	   2f40	RS485_Test.elf
+Finished building: default.size.stdout
+ 
+Finished building: RS485_Test.bin
+ 
+Finished building: RS485_Test.list
+ 
+
+16:09:00 Build Finished. 0 errors, 1 warnings. (took 712ms)
+

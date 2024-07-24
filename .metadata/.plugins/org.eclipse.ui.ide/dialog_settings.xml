@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<list key="installedFeatures">
+		<item value="com.st.stm32cube.common.feature.mx.stinsider:6.0.0.202007160824"/>
+		<item value="com.st.stm32cube.common.feature.mx:6.0.0.202007160824"/>
+		<item value="ilg.gnuarmeclipse.doc.user:1.1.1.201704251808"/>
+		<item value="org.eclipse.cdt.debug.gdbjtag:9.9.0.201908231443"/>
+		<item value="org.eclipse.cdt.gdb:9.9.0.201906111633"/>
+		<item value="org.eclipse.cdt:9.9.0.201909091956"/>
+		<item value="org.eclipse.emf.common:2.16.0.v20190625-1131"/>
+		<item value="org.eclipse.emf.ecore:2.19.0.v20190822-1451"/>
+		<item value="org.eclipse.epp.mpc:1.8.0.v20190725-1807"/>
+		<item value="org.eclipse.help:2.2.700.v20190916-1045"/>
+		<item value="org.eclipse.platform:4.13.0.v20190916-1323"/>
+		<item value="org.eclipse.rcp:4.13.0.v20190916-1045"/>
+		<item value="org.eclipse.remote.console:3.0.1.201909031456"/>
+		<item value="org.eclipse.rse.core:4.5.100.201907301734"/>
+		<item value="org.eclipse.rse.dstore:4.5.100.201907301734"/>
+		<item value="org.eclipse.rse.ftp:4.5.100.201907301734"/>
+		<item value="org.eclipse.rse.local:4.5.100.201907301734"/>
+		<item value="org.eclipse.rse.ssh:4.5.100.201907301734"/>
+		<item value="org.eclipse.rse.telnet:4.5.100.201907301734"/>
+		<item value="org.eclipse.rse:4.5.100.201907301734"/>
+		<item value="org.eclipse.tm.terminal.control.feature:4.5.102.201907301734"/>
+		<item value="org.eclipse.userstorage:1.2.0.v20190308-0433"/>
+	</list>
+	<section name="ExternalProjectImportWizard">
+		<item key="WizardProjectsImportPage.STORE_NESTED_PROJECTS" value="true"/>
+	</section>
+	<section name="SmartImportWizard">
+		<item key="SmartImportRootWizardPage.STORE_HIDE_ALREADY_OPEN" value="false"/>
+		<item key="SmartImportRootWizardPage.STORE_CLOSE_IMPORTED" value="false"/>
+		<item key="SmartImportRootWizardPage.STORE_NESTED_PROJECTS" value="true"/>
+		<item key="SmartImportRootWizardPage.STORE_CONFIGURE_NATURES" value="true"/>
+		<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+			<item value="D:\STM32_CubeIDE_Workspace\Aspiration motherboard LED and Relay test"/>
+			<item value="D:\Abhishek\Projects\Wheel Profile\STM32F3_FW_Package\CMSIS-4.4.0"/>
+			<item value="D:\Abhishek\Projects\Wheel Profile\STM32F3_FW_Package\CMSIS-4.4.0\CMSIS"/>
+			<item value="D:\Abhishek\Projects\Wheel Profile\STM32F3_FW_Package\STM32Cube_FW_F3_V1.11.0\Drivers"/>
+			<item value="D:\Abhishek\Projects\Wheel Profile\STM32F3_FW_Package\STM32Cube_FW_F3_V1.11.0\Drivers\CMSIS\Device\ST\STM32F3xx"/>
+			<item value="D:\Abhishek\STM32 Peripheral codes\RTC\rtc"/>
+		</list>
+	</section>
+</section>

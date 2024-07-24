@@ -1,0 +1,1030 @@
+/* USER CODE BEGIN Header */
+/**
+  ******************************************************************************
+  * @file           : main.c
+  * @brief          : Main program body
+  ******************************************************************************
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+  *
+  ******************************************************************************
+  */
+/* USER CODE END Header */
+
+/* Includes ------------------------------------------------------------------*/
+#include "main.h"
+
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+#include "lcd.h"
+/* USER CODE END Includes */
+
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
+
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+#define HOUR		0x15
+#define MINUT		0x08
+#define WEEK_DAY      RTC_WEEKDAY_TUESDAY
+#define MONTH		RTC_MONTH_SEPTEMBER
+#define DATE		0x29
+#define YEAR		0x20
+
+#define RTC_SET_FLAG_ADDR   0x0
+/* USER CODE END PM */
+
+/* Private variables ---------------------------------------------------------*/
+I2C_HandleTypeDef hi2c1;
+
+RTC_HandleTypeDef hrtc;
+
+/*UART_HandleTypeDef huart1;
+UART_HandleTypeDef huart2;
+UART_HandleTypeDef huart3;*/
+
+/* USER CODE BEGIN PV */
+RTC_TimeTypeDef sTime = {0};
+RTC_DateTypeDef sDate = {0};
+
+volatile uint16_t EEPROM_MEMORY_ADD,Page_no;
+uint8_t lenth_of_Buff,Used_Bytes_In_page,Free_Bytes_In_Page,Page_No_LSB,Page_No_MSB,dt_seven_day;
+uint8_t Temp_data_buff[2000]={0};
+
+uint8_t Coach_Id[] = "123456\n\r";
+
+
+uint8_t cmd_INT = 0xAA, cmd_AIN0 = 0xCB, cmd_AIN1 = 0xDB, cmd_AIN2 = 0xEB;
+/*uint16_t AIN0_DATA,AIN1_DATA,AIN2_DATA,Data_Buff_CH0[3],Data_Buff_CH1[3],Data_Buff_CH2[3];
+uint8_t RXbyte,RXbuff[10];
+uint16_t AIN0[10],AIN1[10],AIN2[10];*/
+
+
+uint8_t DummyData[2000]={0};
+/* USER CODE END PV */
+
+/* Private function prototypes -----------------------------------------------*/
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+static void MX_RTC_Init(void);
+static void MX_USART1_UART_Init(void);
+static void MX_I2C1_Init(void);
+static void MX_USART3_UART_Init(void);
+static void MX_USART2_UART_Init(void);
+/* USER CODE BEGIN PFP */
+void INT_SI8900(void);
+bool   Check_ALL_ADC_CH(void);
+void Mem_Write();
+uint16_t ADC_Mean_Value(uint16_t *ptr);
+/* USER CODE END PFP */
+
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
+
+/* USER CODE END 0 */
+
+/**
+  * @brief  The application entry point.
+  * @retval int
+  */
+int main(void)
+{
+  /* USER CODE BEGIN 1 */
+
+  /* USER CODE END 1 */
+  
+
+  /* MCU Configuration--------------------------------------------------------*/
+
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
+
+  /* USER CODE BEGIN Init */
+
+  /* USER CODE END Init */
+
+  /* Configure the system clock */
+  SystemClock_Config();
+
+  /* USER CODE BEGIN SysInit */
+
+  /* USER CODE END SysInit */
+
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_RTC_Init();
+  MX_USART1_UART_Init();
+  MX_I2C1_Init();
+
+  MX_USART3_UART_Init();
+  MX_USART2_UART_Init();
+  /* USER CODE BEGIN 2 */
+
+
+  lcd_init();
+    lcd_clrscr();
+  	lcd_gotoxy(0,0);
+  	lcd_printstr("RT VISION (P)Ltd",16);
+  	lcd_gotoxy(1,0);//down line
+  	lcd_printstr(" WL  SENSOR",11);
+/*  HAL_GPIO_WritePin(ADC_RS_GPIO_Port, ADC_RS_Pin, SET);
+  HAL_Delay(1000);*/
+//  RTC_CalendarConfig();
+
+
+  HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+  HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+  sprintf(Time,"TIME  %02d:%02d",sTime.Hours,sTime.Minutes);
+  sprintf(Date,"DATE  %02d/%02d/%02d",sDate.Date,sDate.Month,sDate.Year);
+  lcd_clrscr();
+   	lcd_gotoxy(0,0);
+   	lcd_printstr(Time,11);
+   	lcd_gotoxy(1,0); //down line
+   	lcd_printstr(Date,14);
+  __HAL_UART_ENABLE_IT(&huart1,UART_IT_RXNE); //uart 2 for Rs485 data
+//  HAL_NVIC_EnableIRQ (USART1_IRQn);
+   HAL_GPIO_WritePin(RS485_CON_GPIO_Port, RS485_CON_Pin, SET);
+   HAL_GPIO_WritePin(RS485_CON_GPIO_Port, RS485_CON_Pin, RESET);
+   HAL_UART_Transmit(&huart1, "RT Vision Technologies (P) Ltd. Water Level Sensor\n\r", strlen("RT Vision Technologies (P) Ltd. Water Level Sensor\n\r"), 100);
+   HAL_UART_Transmit(&huart1, Time, sizeof(Time), 100);
+   HAL_GPIO_WritePin(RS485_CON_GPIO_Port, RS485_CON_Pin, SET);
+ /*  MB_coil_H = false;
+       MB_coil_M = false;
+       MB_coil_L = false;
+       No_Registers = 4321;*/
+       while(HAL_I2C_IsDeviceReady(&hi2c1,0xA0,5,100)!=HAL_OK)
+         {
+			 MX_I2C1_Init();
+			 HAL_Delay(300);
+         }
+ //       while(HAL_I2C_Mem_Write(&hi2c1,EEPROME_ADD,0x00,I2C_MEMADD_SIZE_16BIT,(uint8_t*)&Page_No_MSB,1,100)!=HAL_OK);
+ //        while(HAL_I2C_Mem_Write(&hi2c1,EEPROME_ADD,0x01,I2C_MEMADD_SIZE_16BIT,(uint8_t*)&Page_No_LSB,1,100)!=HAL_OK);
+ //        while(HAL_I2C_Mem_Write(&hi2c1,EEPROME_ADD,0x02,I2C_MEMADD_SIZE_16BIT,(uint8_t*)&Used_Bytes_In_page,1,100)!=HAL_OK);
+       while(HAL_I2C_Mem_Write(&hi2c1,EEPROME_ADD,0x03,I2C_MEMADD_SIZE_16BIT,(uint8_t*)&Coach_Id,8,100)!=HAL_OK);
+
+       while(HAL_I2C_Mem_Read(&hi2c1,EEPROME_ADD,PAGE_NO_MSB_LOC,I2C_MEMADD_SIZE_16BIT,&Page_No_MSB,1,100)!=HAL_OK);
+      while(HAL_I2C_Mem_Read(&hi2c1,EEPROME_ADD,PAGE_NO_LSB_LOC,I2C_MEMADD_SIZE_16BIT,&Page_No_LSB,1,100)!=HAL_OK);
+       while(HAL_I2C_Mem_Read(&hi2c1,EEPROME_ADD,USED_BYTE_IN_PAGE_LOC,I2C_MEMADD_SIZE_16BIT,&Used_Bytes_In_page,1,100)!=HAL_OK);
+         Page_no=Page_No_MSB;
+         Page_no=Page_no<<8;
+         Page_no=Page_no|Page_No_LSB;
+         EEPROM_MEMORY_ADD=(Page_no*128)+Used_Bytes_In_page;
+         if(EEPROM_MEMORY_ADD==0x0 || Page_no == 0x60)
+         {
+         	EEPROM_MEMORY_ADD=11;
+         }
+
+//  INT_SI8900();
+uint8_t dt_tm[16];
+uint8_t ADC_CH0Data_Buff[10], ADC_CH1Data_Buff[10], ADC_CH2Data_Buff[10];
+uint8_t Len_CH0, Len_CH1, Len_CH2;
+if(GPS_flag == 0)
+{
+	sprintf(LAT, "XXXXXXXX");
+    sprintf(LONG,"XXXXXXXX");
+}
+  /* USER CODE END 2 */
+ 
+ 
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+
+
+
+	 	  HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+	 //	  HAL_RTC_GetTime(&hrtc, &readTime, RTC_FORMAT_BCD);
+	 	  HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+
+	 	 	 					 // HAL_RTC_GetDate(&hrtc, &RTC_DateRead, RTC_FORMAT_BCD);
+
+	 	  sprintf(dt_tm,"%02d/%02d   %02d:%02d:%02d",sDate.Date,sDate.Month,sTime.Hours,sTime.Minutes,sTime.Seconds);
+
+	 		 lcd_gotoxy(0,0);//up line
+
+
+	 			lcd_printstr(dt_tm,16);
+	 		/*	REGISTER_NO_REQ =1;
+	 			REGISTER_DATA_REQ = 1;*/
+	 	  //	memset(dt_tm,0,strlen((char *)dt_tm));
+
+	 				if(COIL_DATA_REQ)
+	 				{
+	 	  	    	 Transmit_coil_data();
+	 				}
+
+	 				if(REGISTER_DATA_REQ)
+	 				{
+	 					REGISTER_DATA_REQ = 0;
+	 					uint8_t data =0;
+	 				//	memset(Temp_data_buff,NULL,strlen(Temp_data_buff));
+	 					HAL_GPIO_WritePin(RS485_CON_GPIO_Port, RS485_CON_Pin, RESET);
+	 					 MX_I2C1_Init();
+	 					 for(uint16_t i =3;i<=EEPROM_MEMORY_ADD;i++)
+	 					 {
+	 					while(HAL_I2C_Mem_Read(&hi2c1,EEPROME_ADD,i,I2C_MEMADD_SIZE_16BIT,&data,1,100)!=HAL_OK){};
+
+
+	 					HAL_UART_Transmit(&huart1, &data, 1, HAL_MAX_DELAY);
+	 					 }
+	 					 HAL_GPIO_WritePin(RS485_CON_GPIO_Port, RS485_CON_Pin, SET);
+
+	 				}
+
+
+	 	  	 	 for(int i =0 ;i<10;i++)
+	 	  	 	 {
+	 	  	 	 //ADC CH0
+	 	  	 	 	  HAL_UART_Transmit(&huart3, &cmd_AIN0, 1, 10);
+	 	  	 	 	  HAL_UART_Receive(&huart3, RXbuff, 3,10);
+	 	  	 	 	  Data_Buff_CH0[0]=0;
+	 	  	 	 	  Data_Buff_CH0[1]=0;
+	 	  	 	 	  Data_Buff_CH0[2]=0;
+	 	  	 	 	   Data_Buff_CH0[0]=RXbuff[1]&(0x0F);
+	 	  	 	 	 Data_Buff_CH0[1]= (RXbuff[2]&(0x7E))>>1;
+	 	  	 	 	 Data_Buff_CH0[2] |=(Data_Buff_CH0[0]<<6);
+	 	  	 	 	 Data_Buff_CH0[2] |= (Data_Buff_CH0[1]);
+	 	  	 	 	 AIN0[i]=Data_Buff_CH0[2];
+	 	  	 	 //ADC CH1
+	 	  	 	 	  HAL_UART_Transmit(&huart3, &cmd_AIN1, 1, 10);
+	 	  	 	 	  HAL_UART_Receive(&huart3, RXbuff, 3,10);
+	 	  	 	 	  Data_Buff_CH1[0]=0;
+	 	  	 	 	  Data_Buff_CH1[1]=0;
+	 	  	 	 	  Data_Buff_CH1[2]=0;
+	 	  	 	 	   Data_Buff_CH1[0]=RXbuff[1]&(0x0F);
+	 	  	 	 	 Data_Buff_CH1[1]= (RXbuff[2]&(0x7E))>>1;
+	 	  	 	 	 Data_Buff_CH1[2] |=(Data_Buff_CH1[0]<<6);
+	 	  	 	 	 Data_Buff_CH1[2] |= (Data_Buff_CH1[1]);
+	 	  	 	 	 AIN1[i]=Data_Buff_CH1[2];
+
+	 	  	 	 //ADC CH2
+	 	  	 	 	  HAL_UART_Transmit(&huart3, &cmd_AIN2, 1, 10);
+	 	  	 	 	  HAL_UART_Receive(&huart3, RXbuff, 3,10);
+	 	  	 	 	  Data_Buff_CH2[0]=0;
+	 	  	 	 	  Data_Buff_CH2[1]=0;
+	 	  	 	 	  Data_Buff_CH2[2]=0;
+	 	  	 	 	   Data_Buff_CH2[0]=RXbuff[1]&(0x0F);
+	 	  	 	 	 Data_Buff_CH2[1]= (RXbuff[2]&(0x7E))>>1;
+	 	  	 	 	 Data_Buff_CH2[2] |=(Data_Buff_CH2[0]<<6);
+	 	  	 	 	 Data_Buff_CH2[2] |= (Data_Buff_CH2[1]);
+	 	  	 	 	 AIN2[i]=Data_Buff_CH2[2];
+
+	 	  	 		 }
+
+
+	 	  	 	 AIN0_DATA =ADC_Mean_Value(AIN0);
+	 	  	 	 AIN1_DATA =ADC_Mean_Value(AIN1);
+	 	  	 	 AIN2_DATA =ADC_Mean_Value(AIN2);
+	 	  	 	 ALL_ADC_OK=Check_ALL_ADC_CH();
+
+
+	 	  	 	/*--------Modified by Abhishek----------------------*/
+	 	  	 	Len_CH0 = sprintf(ADC_CH0Data_Buff, "%d",AIN0_DATA);
+	 	  	    lcd_gotoxy(1,0);//down line
+	 	  	 	lcd_printstr(ADC_CH0Data_Buff,Len_CH0);
+	 	  	 	HAL_Delay(100);
+	 	  	    Len_CH1 = sprintf(ADC_CH1Data_Buff, "%d",AIN1_DATA);
+	 	  	    lcd_gotoxy(1,0);//down line
+	 	  	 	lcd_printstr(ADC_CH1Data_Buff,Len_CH1);
+	 	  	    HAL_Delay(100);
+	 	  	    Len_CH2 = sprintf(ADC_CH2Data_Buff, "%d",AIN2_DATA);
+	 	  	 	lcd_gotoxy(1,0);//down line
+	 	  	    lcd_printstr(ADC_CH2Data_Buff,Len_CH2);
+	 	  	    HAL_Delay(100);
+	 	  	 	/*---------------------------------------------------*/
+
+
+	 	  	 	if(ALL_ADC_OK)
+	 	  	 	{
+	 	  	 		if(AIN0_DATA > 380 && AIN0_DATA < 480)// Then S_LOW Float Switch is Inactive.
+	 	  	 			LOW = 0; //RESET LOW FLAG
+	 	  	 		else if(AIN0_DATA > 500 && AIN0_DATA < 600)//Then S_LOW Float Switch is Active.
+	 	  	 			 LOW = 1; // SET LOW flag.
+	 	  	 		if(AIN1_DATA > 380 && AIN1_DATA < 480)	   // Then S_MEDIUM Float Switch is Inactive.
+	 	  	 		  MEDIUM = 0;// RESET MEDIUM FLAG.
+	 	  	 		else if(AIN1_DATA > 500 && AIN1_DATA < 600)	     //Then S_MEDIUM Float Switch is Active.
+	 	  	 		   MEDIUM = 1;// SET MEDIUM FLAG.
+	 	  	 		if(AIN2_DATA > 380 && AIN2_DATA < 480)		   // Then S_HIGH Float Switch is Inactive.
+	 	  	 			HIGH = 1;// RESET HIGH FLAG.
+	 	  	 		else if(AIN2_DATA > 500 && AIN2_DATA < 600)		 //Then S_HIGH Float Switch is Active.
+	 	  	 			HIGH = 0 ;// SET HIGH FLAG.
+
+
+
+
+	 	  	 			if(LOW && MEDIUM && HIGH)
+	 	  	 			{
+	 	  	 				if(!(strcmp((char*)TXbuff,"FULL")==0))
+	 	  	 				{
+
+	 	  	 				//	uint8_t log_data[1000]={0};
+
+	 	  	 							lcd_gotoxy(1,0);//down line
+	 	  	 							lcd_printstr("WL STATUS : FULL",16);
+	 	  	 							memset(TXbuff,0,strlen((char *)TXbuff));
+	 	  	 							strcpy((char*)TXbuff,"FULL");
+	 	  	 					//		get_gps_data();
+	 	  	 							memset(&Data_buff,NULL,strlen(Data_buff));
+	 	  	 							sprintf(Data_buff,"%02d,%02d,%02d,%02d,%02d,F,%s,%s\r\n",sDate.Date,sDate.Month,sDate.Year,sTime.Hours,sTime.Minutes,LAT,LONG);
+	 	  	 						     MX_I2C1_Init();
+	 	  	 						    Mem_Write();
+	 	  	 						    HAL_GPIO_WritePin(LOW_OUT_GPIO_Port, LOW_OUT_Pin, RESET);
+	 	  	 						    HAL_GPIO_WritePin(MEDIUM_OUT_GPIO_Port, MEDIUM_OUT_Pin, RESET);
+	 	  	 						    HAL_GPIO_WritePin(HIGH_OUT_GPIO_Port, HIGH_OUT_Pin, SET);
+	 	  	 		//				    while(HAL_I2C_Mem_Read(&hi2c1,EEPROME_ADD,0x0,I2C_MEMADD_SIZE_16BIT,(uint8_t*)&log_data,EEPROM_MEMORY_ADD,100)!=HAL_OK);
+	 	  	 		//				    MX_I2C1_Init();
+	 	  	 						       MB_coil_H = true;
+	 	  	 						       MB_coil_M = false;
+	 	  	 						       MB_coil_L = false;
+
+	 	  	 				}
+	 	  	 			}
+	 	  	 			else if(MEDIUM && LOW && !HIGH)
+	 	  	 			{
+	 	  	 				if(!(strcmp((char*)TXbuff,"MEDIUM")==0))
+	 	  	 				{
+
+	 	  	 						lcd_gotoxy(1,0);//down line
+	 	  	 						lcd_printstr("WL STATUS:MEDIUM",16);
+	 	  	 						memset(TXbuff,0,strlen((char *)TXbuff));
+	 	  	 						strcpy((char*)TXbuff,"MEDIUM");
+
+	 	  	 					//	get_gps_data();
+
+	 	  	 				    	memset(&Data_buff,NULL,strlen(Data_buff));
+ 	  	 							sprintf(Data_buff,"%02d,%02d,%02d,%02d,%02d,M,%s,%s\n\r",sDate.Date,sDate.Month,sDate.Year,sTime.Hours,sTime.Minutes,LAT,LONG);
+	 	  	 						MX_I2C1_Init();
+	 	  	 						Mem_Write();
+	 	  	 					    HAL_GPIO_WritePin(LOW_OUT_GPIO_Port, LOW_OUT_Pin, RESET);
+	 	  	 			 		    HAL_GPIO_WritePin(MEDIUM_OUT_GPIO_Port, MEDIUM_OUT_Pin, SET);
+	 	  	 			 		    HAL_GPIO_WritePin(HIGH_OUT_GPIO_Port, HIGH_OUT_Pin, RESET);
+	 	  	 			 		       MB_coil_H = false;
+	 	  	 			 		       MB_coil_M = true;
+	 	  	 			 		       MB_coil_L = false;
+
+	 	  	 				}
+	 	  	 			}
+	 	  	 			else if(!HIGH && !MEDIUM && LOW)
+	 	  	 			{
+	 	  	 				if(!(strcmp((char*)TXbuff,"LOW")==0))
+	 	  	 				{
+
+	 	  	 						lcd_gotoxy(1,0);//down line
+	 	  	 						lcd_printstr("WL STATUS : LOW ",16);
+	 	  	 						memset(TXbuff,0,strlen((char *)TXbuff));
+	 	  	 						strcpy((char*)TXbuff,"LOW");
+	 	  	 					 //						sendsms();
+	 	  	 			//			get_gps_data();
+	 	  	 				    	memset(&Data_buff,NULL,strlen(Data_buff));
+ 	  	 							sprintf(Data_buff,"%02d,%02d,%02d,%02d,%02d,L,%s,%s\n\r",sDate.Date,sDate.Month,sDate.Year,sTime.Hours,sTime.Minutes,LAT,LONG);
+	 	  	 						MX_I2C1_Init();
+	 	  	 						Mem_Write();
+
+	 	  	 						HAL_GPIO_WritePin(LOW_OUT_GPIO_Port, LOW_OUT_Pin, SET);
+	 	  	 						HAL_GPIO_WritePin(MEDIUM_OUT_GPIO_Port, MEDIUM_OUT_Pin, RESET);
+	 	  	 						HAL_GPIO_WritePin(HIGH_OUT_GPIO_Port, HIGH_OUT_Pin, RESET);
+	 	  	 						 MB_coil_H = false;
+	 	  	 						  MB_coil_M = false;
+	 	  	 						  MB_coil_L = true;
+
+	 	  	 				 }
+
+	 	  	 			}
+	 	  	 			else if(!HIGH && !MEDIUM && !LOW)
+	 	  	 			{
+	 	  	 				if(!(strcmp((char*)TXbuff,"EMPTY")==0))
+	 	  	 				{
+
+
+	 	  	 						lcd_gotoxy(1,0);//down line
+	 	  	 						lcd_printstr("WL STATUS: EMPTY",16);
+	 	  	 						memset(TXbuff,0,strlen((char *)TXbuff));
+	 	  	 						strcpy((char*)TXbuff,"EMPTY");
+
+	 	  	// 						sendsms();
+	 	  	 				//	    get_gps_data();
+
+	 	  	 			     		memset(&Data_buff,NULL,strlen(Data_buff));
+ 	  	 							sprintf(Data_buff,"%02d,%02d,%02d,%02d,%02d,E,%s,%s,\r\n",sDate.Date,sDate.Month,sDate.Year,sTime.Hours,sTime.Minutes,LAT,LONG);
+	 	  	 			    	    MX_I2C1_Init();
+	 	  	 			    		Mem_Write();
+	 	  	 						HAL_GPIO_WritePin(LOW_OUT_GPIO_Port, LOW_OUT_Pin, RESET);
+	 	  	 						HAL_GPIO_WritePin(MEDIUM_OUT_GPIO_Port, MEDIUM_OUT_Pin, RESET);
+	 	  	 						HAL_GPIO_WritePin(HIGH_OUT_GPIO_Port, HIGH_OUT_Pin, RESET);
+	 	  	 						       MB_coil_H = false;
+	 	  	 						       MB_coil_M = false;
+	 	  	 						       MB_coil_L = false;
+	 	  	 						 //  INT_SI8900();
+
+	 	  	 				}
+	 	  	 			}
+	 	  	 		else if((HIGH && !MEDIUM && !LOW)||(!HIGH && MEDIUM && !LOW)||(HIGH && MEDIUM &&!LOW)||(HIGH && !MEDIUM && LOW))
+	 	  	 			{
+	 	  	 				if(!(strcmp((char*)TXbuff,"E: FLOAT - ERORR")==0))
+	 	  	 				{
+	 	  	 						lcd_gotoxy(1,0);//down line
+	 	  	 						lcd_printstr("E: FLOAT - ERORR",16);
+	 	  	 						memset(TXbuff,0,strlen((char *)TXbuff));
+	 	  	 						strcpy((char*)TXbuff,"E: FLOAT - ERORR");
+	 	  	 						//	    get_gps_data();
+	 	  	 					    memset(&Data_buff,NULL,strlen(Data_buff));
+ 	  	 							sprintf(Data_buff,"%02d,%02d,%02d,%02d,%02d,X,%s,%s\n\r",sDate.Date,sDate.Month,sDate.Year,sTime.Hours,sTime.Minutes,LAT,LONG);
+	 	  	 					    MX_I2C1_Init();
+	 	  	 					    Mem_Write();
+	 	  	 						HAL_GPIO_WritePin(LOW_OUT_GPIO_Port, LOW_OUT_Pin, RESET);
+	 	  	 						HAL_GPIO_WritePin(MEDIUM_OUT_GPIO_Port, MEDIUM_OUT_Pin, RESET);
+	 	  	 						HAL_GPIO_WritePin(HIGH_OUT_GPIO_Port, HIGH_OUT_Pin, RESET);
+	 	  	 					 MB_coil_H = true;
+	 	  	 				     MB_coil_M = true;
+	 		  			       MB_coil_L = true;
+	 	  	 				}
+	 	  	 			}
+
+	 	  	 	  }
+	 	  //	  sprintf(dt_tm,"%02d/%02d   %02d %02d %02d",sDate.Date,sDate.Month,sTime.Hours,sTime.Minutes,sTime.Seconds);
+
+
+
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
+  }
+  /* USER CODE END 3 */
+}
+
+/**
+  * @brief System Clock Configuration
+  * @retval None
+  */
+void SystemClock_Config(void)
+{
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+
+  /** Configure LSE Drive Capability 
+  */
+  HAL_PWR_EnableBkUpAccess();
+  __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_HIGH);
+  /** Initializes the CPU, AHB and APB busses clocks 
+  */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSE;
+  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL5;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Initializes the CPU, AHB and APB busses clocks 
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1|RCC_PERIPHCLK_I2C1
+                              |RCC_PERIPHCLK_RTC;
+  PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK1;
+  PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_HSI;
+  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
+
+/**
+  * @brief I2C1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C1_Init(void)
+{
+
+  /* USER CODE BEGIN I2C1_Init 0 */
+
+  /* USER CODE END I2C1_Init 0 */
+
+  /* USER CODE BEGIN I2C1_Init 1 */
+
+  /* USER CODE END I2C1_Init 1 */
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.Timing = 0x2000090E;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.OwnAddress2Masks = I2C_OA2_NOMASK;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Configure Analogue filter 
+  */
+  if (HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Configure Digital filter 
+  */
+  if (HAL_I2CEx_ConfigDigitalFilter(&hi2c1, 0) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C1_Init 2 */
+
+  /* USER CODE END I2C1_Init 2 */
+
+}
+
+/**
+  * @brief RTC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_RTC_Init(void)
+{
+
+  /* USER CODE BEGIN RTC_Init 0 */
+
+  /* USER CODE END RTC_Init 0 */
+
+  RTC_TimeTypeDef sTime = {0};
+  RTC_DateTypeDef sDate = {0};
+
+  /* USER CODE BEGIN RTC_Init 1 */
+
+  /* USER CODE END RTC_Init 1 */
+  /** Initialize RTC Only 
+  */
+  hrtc.Instance = RTC;
+  hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
+  hrtc.Init.AsynchPrediv = 127;
+  hrtc.Init.SynchPrediv = 255;
+  hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
+  hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
+  hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+  if (HAL_RTC_Init(&hrtc) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /* USER CODE BEGIN Check_RTC_BKUP */
+  if(HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR1) !=0x32F2 )
+   {
+  /* USER CODE END Check_RTC_BKUP */
+
+  /** Initialize RTC and set the Time and Date 
+  */
+
+  sTime.Hours = HOUR;
+  sTime.Minutes = MINUT;
+  sTime.Seconds = 0x0;
+  sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+  sTime.StoreOperation = RTC_STOREOPERATION_RESET;
+  if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BCD) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sDate.WeekDay = WEEK_DAY;
+  sDate.Month = MONTH;
+  sDate.Date = DATE;
+  sDate.Year = YEAR;
+
+  if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BCD) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR1, 0x32F2);
+
+  /* USER CODE BEGIN RTC_Init 2 */
+   }
+  /* USER CODE END RTC_Init 2 */
+
+}
+
+/**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 9600;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
+
+}
+
+/**
+  * @brief USART2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART2_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART2_Init 0 */
+
+  /* USER CODE END USART2_Init 0 */
+
+  /* USER CODE BEGIN USART2_Init 1 */
+
+  /* USER CODE END USART2_Init 1 */
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 9600;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART2_Init 2 */
+
+  /* USER CODE END USART2_Init 2 */
+
+}
+
+/**
+  * @brief USART3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART3_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART3_Init 0 */
+
+  /* USER CODE END USART3_Init 0 */
+
+  /* USER CODE BEGIN USART3_Init 1 */
+
+  /* USER CODE END USART3_Init 1 */
+  huart3.Instance = USART3;
+  huart3.Init.BaudRate = 115200;
+  huart3.Init.WordLength = UART_WORDLENGTH_8B;
+  huart3.Init.StopBits = UART_STOPBITS_1;
+  huart3.Init.Parity = UART_PARITY_NONE;
+  huart3.Init.Mode = UART_MODE_TX_RX;
+  huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart3.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart3.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart3.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART3_Init 2 */
+
+  /* USER CODE END USART3_Init 2 */
+
+}
+
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(LOW_OUT_GPIO_Port, LOW_OUT_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, GPS_GSM_RS_Pin|LCD_RS_Pin|RS485_CON_Pin|LCD_EN_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, ADC_RS_Pin|LCD_D4_Pin|LCD_D5_Pin|LCD_D6_Pin 
+                          |LCD_D7_Pin|HIGH_OUT_Pin|MEDIUM_OUT_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : LOW_OUT_Pin */
+  GPIO_InitStruct.Pin = LOW_OUT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(LOW_OUT_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : GPS_GSM_RS_Pin LCD_RS_Pin LCD_EN_Pin */
+  GPIO_InitStruct.Pin = GPS_GSM_RS_Pin|LCD_RS_Pin|LCD_EN_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : ADC_RS_Pin */
+  GPIO_InitStruct.Pin = ADC_RS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(ADC_RS_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : LCD_D4_Pin LCD_D5_Pin LCD_D6_Pin HIGH_OUT_Pin 
+                           MEDIUM_OUT_Pin */
+  GPIO_InitStruct.Pin = LCD_D4_Pin|LCD_D5_Pin|LCD_D6_Pin|HIGH_OUT_Pin 
+                          |MEDIUM_OUT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : LCD_D7_Pin */
+  GPIO_InitStruct.Pin = LCD_D7_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(LCD_D7_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : RS485_CON_Pin */
+  GPIO_InitStruct.Pin = RS485_CON_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(RS485_CON_GPIO_Port, &GPIO_InitStruct);
+
+}
+
+/* USER CODE BEGIN 4 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	static uint8_t i=0,j=0;
+if(huart->Instance==USART1) //RS485 UART
+	{
+	//////////////////////////////////////////////////////////
+	  if(pData == ':' && i == 0)
+	  {
+		  MB_Request[i++] = pData;
+	  }
+	  else if(MB_Request[0] == ':')
+	  {
+		  MB_Request[i++] = pData;
+	  }
+	  else if(pData == '$' && j==0)
+	  {
+		  log_history_cmd[j++] =pData;
+	  }
+	  else if(log_history_cmd[0]=='$' )
+	  {
+		  log_history_cmd[j++] =pData;
+	  }
+
+	  if(j > 8)
+      {
+		  j=0;
+      if(strcmp((char*)log_history_cmd,"$HISTORY#")==0)
+	//	if(log_history_cmd[0]=='$' && log_history_cmd[1] =='H' && log_history_cmd[2]=='I' && log_history_cmd[3]=='S' && log_history_cmd[4] =='#' )
+      {
+    	  REGISTER_DATA_REQ =1;
+    	  memset(log_history_cmd,0,sizeof(log_history_cmd));
+
+      }
+      else
+      memset(log_history_cmd,0,sizeof(log_history_cmd));
+	  }
+
+	  if(i == 17)
+	  {
+		  i = 0;
+       if(MB_Request[1] == 0x30 && MB_Request[2] == 0x33)//verifying device address
+       {
+    	   if(MB_Request[3] == 0x30 && MB_Request[4] == 0x31)//Cheking for function code
+    	   {
+    		   memset(MB_Request,0,sizeof(MB_Request));
+    		   COIL_DATA_REQ = 1;
+            // Transmit_coil_data();
+    	   }
+    	/*   else if(MB_Request[3] == 0x30 && MB_Request[4] == 0x34)
+    	   {
+           //  Transmit_No_Register();
+             REGISTER_NO_REQ =1;
+    	   }
+    	   else if(MB_Request[3] == 0x30 && MB_Request[4] == 0x33)
+    	   {
+    		   REGISTER_DATA_REQ =1;
+          //   Transmit_Register_data();
+    	   }*/
+       }
+       else
+    	   memset(MB_Request,0,sizeof(MB_Request));
+
+
+	/////////////////////////////////////////////////////////
+    }
+
+
+	 // DummyData[j++]=pData;
+	}
+}
+
+
+void INT_SI8900(void)
+{
+	HAL_GPIO_WritePin(ADC_RS_GPIO_Port, ADC_RS_Pin, RESET);
+	HAL_Delay(100);
+	HAL_GPIO_WritePin(ADC_RS_GPIO_Port, ADC_RS_Pin, SET);
+
+	for(int  i =0 ;i<2000;i++)
+  {
+	  HAL_UART_Transmit(&huart3,&cmd_INT, 1, 10);
+	  HAL_UART_Receive(&huart3, &RXbyte, 1, 10);
+	 // DummyData[i]=RXbyte;
+	  if(RXbyte==0x55)
+	  {
+
+		HAL_UART_Receive(&huart3, &RXbyte, 1, 10);
+	//	DummyData[i++]=RXbyte;
+		HAL_UART_Receive(&huart3, &RXbyte, 1, 10);
+
+
+//		DummyData[i++]=RXbyte;
+	//	HAL_UART_Receive(&huart3, &RXbyte, 1, 10);
+	//			DummyData[i++]=RXbyte;
+
+//		lcd_clrscr();
+//		lcd_gotoxy(1,0);
+//		lcd_printstr("ADC INIT DONE",14);
+//		HAL_Delay(1000);
+		break;
+	  }
+
+  }
+}
+uint16_t ADC_Mean_Value(uint16_t *ptr)
+{
+    uint16_t sum=0;
+    for(uint8_t i = 0;i<10;i++ )
+    {
+    sum+=ptr[i];
+    }
+    sum = sum/10;
+    return sum;
+}
+
+void Mem_Write()
+{
+ uint8_t MASK=0xFF;
+	lenth_of_Buff=strlen((char*)Data_buff);
+	Used_Bytes_In_page=EEPROM_MEMORY_ADD%128;
+	Page_no=EEPROM_MEMORY_ADD/128;
+  Free_Bytes_In_Page=128-Used_Bytes_In_page;
+	if(lenth_of_Buff<Free_Bytes_In_Page)
+	{
+			while(HAL_I2C_IsDeviceReady(&hi2c1,0xA0,3,100)!=HAL_OK);
+			while(HAL_I2C_Mem_Write(&hi2c1,EEPROME_ADD,EEPROM_MEMORY_ADD,I2C_MEMADD_SIZE_16BIT,(uint8_t*)&Data_buff,lenth_of_Buff,100)!=HAL_OK){};
+					  EEPROM_MEMORY_ADD=EEPROM_MEMORY_ADD+lenth_of_Buff;
+				    memset(Data_buff,0,strlen((char *)Data_buff));
+		Page_no=EEPROM_MEMORY_ADD/128;
+		Used_Bytes_In_page=EEPROM_MEMORY_ADD%128;
+				Page_No_MSB=(Page_no>>8)& MASK;
+				Page_No_LSB=(Page_no)& MASK;
+		  while(HAL_I2C_Mem_Write(&hi2c1,EEPROME_ADD,PAGE_NO_MSB_LOC,I2C_MEMADD_SIZE_16BIT,&Page_No_MSB,1,100)!=HAL_OK);
+				while(HAL_I2C_Mem_Write(&hi2c1,EEPROME_ADD,PAGE_NO_LSB_LOC,I2C_MEMADD_SIZE_16BIT,&Page_No_LSB,1,100)!=HAL_OK);
+		  while(HAL_I2C_Mem_Write(&hi2c1,EEPROME_ADD,USED_BYTE_IN_PAGE_LOC,I2C_MEMADD_SIZE_16BIT,&Used_Bytes_In_page,1,100)!=HAL_OK);
+
+	}
+  else
+	{
+		while(HAL_I2C_IsDeviceReady(&hi2c1,0xA0,3,100)!=HAL_OK);
+		while(HAL_I2C_Mem_Write(&hi2c1,EEPROME_ADD,EEPROM_MEMORY_ADD,I2C_MEMADD_SIZE_16BIT,(uint8_t*)&Data_buff,Free_Bytes_In_Page,100)!=HAL_OK){};
+	   EEPROM_MEMORY_ADD=EEPROM_MEMORY_ADD+Free_Bytes_In_Page;
+		while(HAL_I2C_Mem_Write(&hi2c1,EEPROME_ADD,EEPROM_MEMORY_ADD,I2C_MEMADD_SIZE_16BIT,((uint8_t*)&Data_buff)+Free_Bytes_In_Page,(lenth_of_Buff-Free_Bytes_In_Page),100)!=HAL_OK);
+		EEPROM_MEMORY_ADD=EEPROM_MEMORY_ADD+(lenth_of_Buff-Free_Bytes_In_Page);
+		memset(Data_buff,0,strlen((char *)Data_buff));
+			Page_no=EEPROM_MEMORY_ADD/128;
+		Used_Bytes_In_page=EEPROM_MEMORY_ADD%128;
+			Page_No_MSB=(Page_no>>8)& MASK;
+				Page_No_LSB=(Page_no)& MASK;
+			  while(HAL_I2C_Mem_Write(&hi2c1,EEPROME_ADD,PAGE_NO_MSB_LOC,I2C_MEMADD_SIZE_16BIT,&Page_No_MSB,1,100)!=HAL_OK);
+				while(HAL_I2C_Mem_Write(&hi2c1,EEPROME_ADD,PAGE_NO_LSB_LOC,I2C_MEMADD_SIZE_16BIT,&Page_No_LSB,1,100)!=HAL_OK);
+		  while(HAL_I2C_Mem_Write(&hi2c1,EEPROME_ADD,USED_BYTE_IN_PAGE_LOC,I2C_MEMADD_SIZE_16BIT,&Used_Bytes_In_page,1,100)!=HAL_OK);
+	}
+
+}
+
+bool   Check_ALL_ADC_CH(void)
+{
+
+	if(AIN0_DATA  < 20 || AIN1_DATA  < 20 || AIN2_DATA  < 20)
+	{
+		lcd_gotoxy(1,0);//down line
+	   lcd_printstr("SENSOR'S UNPLUG",16);
+		HAL_GPIO_WritePin(LOW_OUT_GPIO_Port, LOW_OUT_Pin, RESET);
+		 	  	 						HAL_GPIO_WritePin(MEDIUM_OUT_GPIO_Port, MEDIUM_OUT_Pin, RESET);
+		 	  	 						HAL_GPIO_WritePin(HIGH_OUT_GPIO_Port, HIGH_OUT_Pin, RESET);
+		 	  	 					 MB_coil_H = true;
+		 	  	 				     MB_coil_M = true;
+		 		  			       MB_coil_L = true;
+		 		  			    memset(TXbuff,0,strlen((char *)TXbuff));
+		 		  			    strcpy((char*)TXbuff,"SENSOR'S UNPLUG");
+	   return 0;
+	}
+	if(AIN0_DATA  > 800 || AIN1_DATA  > 800 || AIN2_DATA  > 800)
+	{
+		lcd_gotoxy(1,0);//down line
+			   lcd_printstr("SENSOR'S -SHORT-",16);
+				HAL_GPIO_WritePin(LOW_OUT_GPIO_Port, LOW_OUT_Pin, RESET);
+				 	  	 						HAL_GPIO_WritePin(MEDIUM_OUT_GPIO_Port, MEDIUM_OUT_Pin, RESET);
+				 	  	 						HAL_GPIO_WritePin(HIGH_OUT_GPIO_Port, HIGH_OUT_Pin, RESET);
+				 	  	 					 MB_coil_H = true;
+				 	  	 				     MB_coil_M = true;
+				 		  			       MB_coil_L = true;
+				 		  			    memset(TXbuff,0,strlen((char *)TXbuff));
+				 		  			    strcpy((char*)TXbuff,"SENSOR'S -SHORT-");
+			   return 0;
+	}
+
+	return 1;
+	}
+/* USER CODE END 4 */
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+  */
+void Error_Handler(void)
+{
+  /* USER CODE BEGIN Error_Handler_Debug */
+  /* User can add his own implementation to report the HAL error return state */
+
+  /* USER CODE END Error_Handler_Debug */
+}
+
+#ifdef  USE_FULL_ASSERT
+/**
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
+void assert_failed(char *file, uint32_t line)
+{ 
+  /* USER CODE BEGIN 6 */
+  /* User can add his own implementation to report the file name and line number,
+     tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+  /* USER CODE END 6 */
+}
+#endif /* USE_FULL_ASSERT */
+
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

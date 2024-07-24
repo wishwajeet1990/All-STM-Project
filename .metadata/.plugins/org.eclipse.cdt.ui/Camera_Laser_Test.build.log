@@ -1,0 +1,20 @@
+12:44:55 **** Incremental Build of configuration Debug for project Camera_Laser_Test ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F301x8 -DDEBUG -c -I../Core/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Camera_Laser_Test.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\STM32_CubeIDE_Workspace\Camera_Laser_Test\STM32F301C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Camera_Laser_Test.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Camera_Laser_Test.elf
+ 
+arm-none-eabi-objdump -h -S  Camera_Laser_Test.elf  > "Camera_Laser_Test.list"
+arm-none-eabi-objcopy  -O binary  Camera_Laser_Test.elf  "Camera_Laser_Test.bin"
+arm-none-eabi-size   Camera_Laser_Test.elf 
+   text	   data	    bss	    dec	    hex	filename
+   7396	     20	   1572	   8988	   231c	Camera_Laser_Test.elf
+Finished building: default.size.stdout
+ 
+Finished building: Camera_Laser_Test.bin
+Finished building: Camera_Laser_Test.list
+ 
+ 
+
+12:44:56 Build Finished. 0 errors, 0 warnings. (took 658ms)
+

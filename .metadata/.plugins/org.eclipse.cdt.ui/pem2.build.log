@@ -1,0 +1,10 @@
+11:15:04 **** Incremental Build of configuration Debug for project pem2 ****
+make -j8 all 
+arm-none-eabi-size   pem2.elf 
+   text	   data	    bss	    dec	    hex	filename
+  11920	     20	   1644	  13584	   3510	pem2.elf
+Finished building: default.size.stdout
+ 
+
+11:15:04 Build Finished. 0 errors, 0 warnings. (took 290ms)
+

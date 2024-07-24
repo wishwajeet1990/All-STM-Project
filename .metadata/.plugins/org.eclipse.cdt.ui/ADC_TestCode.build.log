@@ -1,0 +1,13 @@
+11:53:17 **** Incremental Build of configuration Debug for project ADC_TestCode ****
+make -j8 all 
+arm-none-eabi-gcc "../Src/ClockConfig.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DSTM32 -DSTM32F3 -DSTM32F301C8Tx -DDEBUG -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/ClockConfig.d" -MT"Src/ClockConfig.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/ClockConfig.o"
+In file included from ../Src/ClockConfig.c:8:0:
+../Inc/ClockConfig.h:11:10: fatal error: stm32f30xx.h: No such file or directory
+ #include "stm32f30xx.h"
+          ^~~~~~~~~~~~~~
+compilation terminated.
+make: *** [Src/subdir.mk:27: Src/ClockConfig.o] Error 1
+"make -j8 all" terminated with exit code 2. Build might be incomplete.
+
+11:53:18 Build Failed. 2 errors, 0 warnings. (took 560ms)
+

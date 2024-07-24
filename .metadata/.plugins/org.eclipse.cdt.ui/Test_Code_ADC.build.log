@@ -1,0 +1,20 @@
+12:42:14 **** Incremental Build of configuration Debug for project Test_Code_ADC ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F301x8 -DDEBUG -c -I../Core/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc "../Core/Src/system_stm32f3xx.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F301x8 -DDEBUG -c -I../Core/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/system_stm32f3xx.d" -MT"Core/Src/system_stm32f3xx.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/system_stm32f3xx.o"
+In file included from ../Drivers/CMSIS/Device/ST/STM32F3xx/Include/stm32f3xx.h:213:0,
+                 from ../Core/Src/system_stm32f3xx.c:70:
+../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h:30:10: fatal error: stm32f3xx_hal_conf.h: No such file or directory
+ #include "stm32f3xx_hal_conf.h"
+          ^~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make: *** [Core/Src/subdir.mk:38: Core/Src/system_stm32f3xx.o] Error 1
+make: *** Waiting for unfinished jobs....
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:32:15: warning: variable 'GPIO_Config' set but not used [-Wunused-but-set-variable]
+  GPIO_TypeDef GPIO_Config;
+               ^~~~~~~~~~~
+"make -j8 all" terminated with exit code 2. Build might be incomplete.
+
+12:42:15 Build Failed. 3 errors, 1 warnings. (took 362ms)
+

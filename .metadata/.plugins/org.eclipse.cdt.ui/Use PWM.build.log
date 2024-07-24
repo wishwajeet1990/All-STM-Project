@@ -1,0 +1,10 @@
+13:20:41 **** Build of configuration Debug for project Use PWM ****
+make -j8 all 
+arm-none-eabi-size  Use\ PWM.elf 
+   text	   data	    bss	    dec	    hex	filename
+  12052	     20	   1644	  13716	   3594	Use PWM.elf
+Finished building: default.size.stdout
+ 
+
+13:20:41 Build Finished. 0 errors, 0 warnings. (took 315ms)
+

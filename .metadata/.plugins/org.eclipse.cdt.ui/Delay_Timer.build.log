@@ -1,0 +1,21 @@
+18:28:04 **** Incremental Build of configuration Debug for project Delay_Timer ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F301x8 -DDEBUG -c -I../Core/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc "../Core/Src/stm32f3xx_it.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F301x8 -DDEBUG -c -I../Core/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/stm32f3xx_it.d" -MT"Core/Src/stm32f3xx_it.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/stm32f3xx_it.o"
+arm-none-eabi-gcc -o "Delay_Timer.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\STM32_CubeIDE_Workspace\Delay_Timer\STM32F301C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Delay_Timer.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Delay_Timer.elf
+ 
+arm-none-eabi-objdump -h -S  Delay_Timer.elf  > "Delay_Timer.list"
+arm-none-eabi-objcopy  -O binary  Delay_Timer.elf  "Delay_Timer.bin"
+arm-none-eabi-size   Delay_Timer.elf 
+   text	   data	    bss	    dec	    hex	filename
+  10644	     20	   1644	  12308	   3014	Delay_Timer.elf
+Finished building: default.size.stdout
+ 
+Finished building: Delay_Timer.bin
+ 
+Finished building: Delay_Timer.list
+ 
+
+18:28:05 Build Finished. 0 errors, 0 warnings. (took 711ms)
+

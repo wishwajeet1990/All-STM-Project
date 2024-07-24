@@ -1,0 +1,10 @@
+12:57:45 **** Incremental Build of configuration Debug for project WPMS_MCU_CARD_Rev_1.00 ****
+make -j8 all 
+arm-none-eabi-size   WPMS_MCU_CARD_Rev_1.00.elf 
+   text	   data	    bss	    dec	    hex	filename
+  30828	    196	   3780	  34804	   87f4	WPMS_MCU_CARD_Rev_1.00.elf
+Finished building: default.size.stdout
+ 
+
+12:57:46 Build Finished. 0 errors, 0 warnings. (took 400ms)
+

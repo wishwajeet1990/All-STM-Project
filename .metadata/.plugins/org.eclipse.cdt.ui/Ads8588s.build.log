@@ -1,0 +1,56 @@
+17:54:25 **** Incremental Build of configuration Debug for project Ads8588s ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F301x8 -DDEBUG -c -I../Core/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/Abhishek/Desktop/Final Code/Ads8588s/Core/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:240:4: warning: implicit declaration of function 'Flash_Write_Data'; did you mean 'Flash_Read_Data'? [-Wimplicit-function-declaration]
+  240 |    Flash_Write_Data(0x02,pucBuff,20);
+      |    ^~~~~~~~~~~~~~~~
+      |    Flash_Read_Data
+../Core/Src/main.c: In function 'Flash_Read_Write':
+../Core/Src/main.c:265:26: warning: pointer targets in passing argument 2 of 'Flash_Read_Data' differ in signedness [-Wpointer-sign]
+  265 |     Flash_Read_Data(0x02,receivedata,25);
+      |                          ^~~~~~~~~~~
+      |                          |
+      |                          char *
+In file included from ../Core/Src/main.c:25:
+../Core/Inc/WB_Flash.h:50:33: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'char *'
+   50 | void Flash_Read_Data(uint16_t , uint8_t* , uint16_t);
+      |                                 ^~~~~~~~
+../Core/Src/main.c:270:36: warning: pointer targets in passing argument 2 of 'HAL_UART_Transmit' differ in signedness [-Wpointer-sign]
+  270 |          HAL_UART_Transmit(&huart2,str,strlen(str), 100);
+      |                                    ^~~
+      |                                    |
+      |                                    char *
+In file included from ../Core/Inc/stm32f3xx_hal_conf.h:326,
+                 from ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h:30,
+                 from ../Core/Inc/main.h:31,
+                 from ../Core/Src/main.c:21:
+../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_uart.h:1462:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'char *'
+ 1462 | HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c:274:31: warning: pointer targets in passing argument 2 of 'HAL_UART_Transmit' differ in signedness [-Wpointer-sign]
+  274 |     HAL_UART_Transmit(&huart2,"\n\r",4, 100);
+      |                               ^~~~~~
+      |                               |
+      |                               char *
+In file included from ../Core/Inc/stm32f3xx_hal_conf.h:326,
+                 from ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h:30,
+                 from ../Core/Inc/main.h:31,
+                 from ../Core/Src/main.c:21:
+../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_uart.h:1462:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'char *'
+ 1462 | HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout);
+      |                                                                ~~~~~~~~~^~~~~
+arm-none-eabi-gcc -o "Ads8588s.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Abhishek\Desktop\Final Code\Ads8588s\STM32F301C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Ads8588s.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Ads8588s.elf
+ 
+arm-none-eabi-size   Ads8588s.elf 
+arm-none-eabi-objdump -h -S  Ads8588s.elf  > "Ads8588s.list"
+   text	   data	    bss	    dec	    hex	filename
+  37588	    588	   9012	  47188	   b854	Ads8588s.elf
+Finished building: default.size.stdout
+ 
+Finished building: Ads8588s.list
+ 
+
+17:54:26 Build Finished. 0 errors, 4 warnings. (took 989ms)
+

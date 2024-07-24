@@ -1,0 +1,27 @@
+15:59:35 **** Incremental Build of configuration Debug for project LL_Test ****
+make -j8 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DSTM32 -DSTM32F3 -DSTM32F301C8Tx -DDEBUG -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Src/system_stm32f3xx.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DSTM32 -DSTM32F3 -DSTM32F301C8Tx -DDEBUG -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/system_stm32f3xx.d" -MT"Src/system_stm32f3xx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/system_stm32f3xx.o"
+In file included from ../Inc/core_cm4.h:208:0,
+                 from ../Inc/stm32f301x8.h:127,
+                 from ../Inc/stm32f3xx.h:126,
+                 from ../Src/main.c:24:
+../Inc/core_cmInstr.h:58:12: fatal error: cmsis_gcc.h: No such file or directory
+   #include <cmsis_gcc.h>
+            ^~~~~~~~~~~~~
+In file included from ../Inc/core_cm4.h:208:0,
+                 from ../Inc/stm32f301x8.h:127,
+                 from ../Inc/stm32f3xx.h:126,
+                 from ../Src/system_stm32f3xx.c:70:
+../Inc/core_cmInstr.h:58:12: fatal error: cmsis_gcc.h: No such file or directory
+   #include <cmsis_gcc.h>
+            ^~~~~~~~~~~~~
+compilation terminated.
+compilation terminated.
+make: *** [Src/subdir.mk:27: Src/main.o] Error 1
+make: *** Waiting for unfinished jobs....
+make: *** [Src/subdir.mk:33: Src/system_stm32f3xx.o] Error 1
+"make -j8 all" terminated with exit code 2. Build might be incomplete.
+
+15:59:35 Build Failed. 5 errors, 0 warnings. (took 217ms)
+

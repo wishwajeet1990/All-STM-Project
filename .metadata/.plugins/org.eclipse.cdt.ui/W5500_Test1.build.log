@@ -1,0 +1,10 @@
+13:09:18 **** Incremental Build of configuration Debug for project W5500_Test1 ****
+make -j8 all 
+arm-none-eabi-size   W5500_Test1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  20928	    200	   1880	  23008	   59e0	W5500_Test1.elf
+Finished building: default.size.stdout
+ 
+
+13:09:19 Build Finished. 0 errors, 0 warnings. (took 383ms)
+

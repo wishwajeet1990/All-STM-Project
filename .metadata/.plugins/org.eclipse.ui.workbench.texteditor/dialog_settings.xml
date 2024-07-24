@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.GotoLineAction$GotoLineDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="729"/>
+		<item key="DIALOG_Y_ORIGIN" value="403"/>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item key="wrap" value="true"/>
+		<item key="casesensitive" value="false"/>
+		<item key="wholeword" value="false"/>
+		<item key="incremental" value="false"/>
+		<item key="isRegEx" value="false"/>
+		<item key="selection" value="FLASH_BASE"/>
+		<list key="findhistory">
+			<item value="FLASH_BASE"/>
+			<item value="ADC1"/>
+			<item value="ADON"/>
+			<item value="FLASH"/>
+			<item value="*FLASH"/>
+			<item value="W25qxx_Spi"/>
+			<item value="Flash_PageDataRead"/>
+			<item value="g_unPageAddress_Read"/>
+			<item value="W25qxx_ReadSector"/>
+			<item value="UART2"/>
+			<item value="9600"/>
+			<item value="RTC_TimeTypeDef"/>
+			<item value="ip"/>
+			<item value="192.168"/>
+			<item value="g_unAxleCount_W1"/>
+		</list>
+		<list key="replacehistory">
+			<item value=""/>
+			<item value="SPI2_RxTx"/>
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="1188"/>
+		<item key="DIALOG_Y_ORIGIN" value="422"/>
+		<item key="DIALOG_WIDTH" value="284"/>
+		<item key="DIALOG_HEIGHT" value="391"/>
+		<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI"/>
+	</section>
+</section>

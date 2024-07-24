@@ -1,0 +1,42 @@
+12:59:49 **** Build of configuration Debug for project WP_MCU2_Rev1.0 ****
+make -j8 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DSTM32 -DSTM32F3 -DSTM32F301C8Tx -DDEBUG -c -I../Inc -I"D:/Abhishek/Projects/Wheel Profile/Firmware/MCU1/Drivers/Inc" -I"D:/Abhishek/Projects/Wheel Profile/Firmware/MCU1/Drivers/Src" -I"D:/Abhishek/Projects/Wheel Profile/Firmware/MCU1/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Drivers/Src/peripheral.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DSTM32 -DSTM32F3 -DSTM32F301C8Tx -DDEBUG -c -I../Inc -I"D:/Abhishek/Projects/Wheel Profile/Firmware/MCU1/Drivers/Src" -I"D:/Abhishek/Projects/Wheel Profile/Firmware/MCU1/Drivers/Inc" -I"D:/Abhishek/Projects/Wheel Profile/Firmware/MCU1/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/Src/peripheral.d" -MT"Drivers/Src/peripheral.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Drivers/Src/peripheral.o"
+../Drivers/Src/peripheral.c: In function 'Init_RTCC':
+../Drivers/Src/peripheral.c:2065:2: warning: implicit declaration of function 'Set_Time'; did you mean 'Init_Timer6'? [-Wimplicit-function-declaration]
+  Set_Time(&sTime);
+  ^~~~~~~~
+  Init_Timer6
+../Drivers/Src/peripheral.c:2066:2: warning: implicit declaration of function 'Set_Date' [-Wimplicit-function-declaration]
+  Set_Date(&sDate);
+  ^~~~~~~~
+../Drivers/Src/peripheral.c: At top level:
+../Drivers/Src/peripheral.c:2074:6: warning: conflicting types for 'Set_Time'
+ void Set_Time(RTC_TimeTypeDef *sTime)
+      ^~~~~~~~
+../Drivers/Src/peripheral.c:2065:2: note: previous implicit declaration of 'Set_Time' was here
+  Set_Time(&sTime);
+  ^~~~~~~~
+../Drivers/Src/peripheral.c:2086:6: warning: conflicting types for 'Set_Date'
+ void Set_Date(RTC_DateTypeDef *sDate)
+      ^~~~~~~~
+../Drivers/Src/peripheral.c:2066:2: note: previous implicit declaration of 'Set_Date' was here
+  Set_Date(&sDate);
+  ^~~~~~~~
+arm-none-eabi-gcc -o "WP_MCU2_Rev1.0.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\Abhishek\Projects\Wheel Profile\Firmware\MCU1\STM32F301C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="WP_MCU2_Rev1.0.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: WP_MCU2_Rev1.0.elf
+ 
+arm-none-eabi-objdump -h -S  WP_MCU2_Rev1.0.elf  > "WP_MCU2_Rev1.0.list"
+arm-none-eabi-objcopy  -O binary  WP_MCU2_Rev1.0.elf  "WP_MCU2_Rev1.0.bin"
+arm-none-eabi-size   WP_MCU2_Rev1.0.elf 
+   text	   data	    bss	    dec	    hex	filename
+   6480	     12	   1836	   8328	   2088	WP_MCU2_Rev1.0.elf
+Finished building: default.size.stdout
+ 
+Finished building: WP_MCU2_Rev1.0.bin
+Finished building: WP_MCU2_Rev1.0.list
+ 
+ 
+
+12:59:50 Build Finished. 0 errors, 4 warnings. (took 724ms)
+
