@@ -1,0 +1,666 @@
+
+#include "../inc/app.h"
+
+/*
+SMOKE_CONFIG smoke_config_data =
+{
+
+	.alert_count_threshold 	= 100U,
+	.alert_curr_counter 	= 0U,
+	.action_count_threshold = 100U,
+	.action_curr_counter 	= 0U,
+	.fire_1_count_threshold = 100U,
+	.fire_1_curr_counter 	= 0U,
+	.fire_2_count_threshold = 100U,
+	.fire_2_curr_counter 	= 0U,
+
+	.alert_threshold 		= 10U,
+	.action_threshold 		= 20U,
+	.fire_1_threshold 		= 30U,
+	.fire_2_threshold 		= 40U,
+	.fault_threshold		= 300U,
+
+	.smk_lower_dflt_offset	= 0U,
+	.smk_higher_dflt_offset	= 0U
+};
+*/
+SMOKE_CONFIG smoke_config_data;
+
+uint16_t smoke_adc_buff[5];
+uint16_t curr_smk_val = 0U;
+uint8_t count = 0U;
+
+#if 1
+APP_StatusTypeDef smoke_chamber()
+{
+	APP_StatusTypeDef ret = Board_OK;
+	uint16_t smoke_raw_adc = 0U;
+
+	//printf("Before Supplied as arguement Smoke value = %d\n",smoke_raw_adc);
+	//printf("Address before Supplied as arguement = %d\n",&smoke_raw_adc);
+	ret = get_smoke_val (&smoke_raw_adc);
+	//printf("Address after Supplied as arguement = %d\n",&smoke_raw_adc);
+	//printf("Initial Smoke value = %d\n",smoke_raw_adc);
+	//printf("Smoke Default Offset value = %d\n",smoke_config_data.smk_higher_dflt_offset);
+	//smoke_raw_adc =   smoke_raw_adc - smoke_config_data.smk_higher_dflt_offset;
+	if(smoke_raw_adc > smoke_config_data.smk_higher_dflt_offset)
+	{
+		printf("Smoke value = %d\n",smoke_raw_adc - (smoke_config_data.smk_higher_dflt_offset + 1));
+	}
+
+//	if((smoke_raw_adc >= smoke_config_data.alert_threshold) &&		/* check Alert condition */
+//		(smoke_raw_adc < smoke_config_data.action_threshold))
+//	{
+//		if(0 == smoke_config_data.alert_time)
+//		{
+//			smoke_config_data.alert_time = GET_SYS_TIK_VAL;
+//
+//			smoke_config_data.action_time = 0U;
+//			smoke_config_data.fire1_time = 0U;
+//			smoke_config_data.fire2_time = 0U;
+//		}
+//		else
+//		{
+//			if((TIME_NOW(smoke_config_data.alert_time)) > smoke_config_data.alert_delay_period )
+//			{
+//				/*set the flag of state */
+//				state_flag.alert = 1U;
+//				state_flag.action = 0U;
+//				state_flag.fire1 = 0U;
+//				state_flag.fire2 = 0U;
+//
+//				/* clear the time */
+//				smoke_config_data.alert_time = 0U;
+//			}
+//		}
+//	}
+//	else if((smoke_raw_adc >= smoke_config_data.action_threshold) &&		/* check action condition */
+//			(smoke_raw_adc < smoke_config_data.fire_1_threshold))
+//	{
+//		if(0 == smoke_config_data.action_time)
+//		{
+//			smoke_config_data.action_time = GET_SYS_TIK_VAL;
+//
+//			smoke_config_data.alert_time = 0U;
+//			smoke_config_data.fire1_time = 0U;
+//			smoke_config_data.fire2_time = 0U;
+//		}
+//		else
+//		{
+//			if((TIME_NOW(smoke_config_data.action_time)) > smoke_config_data.action_delay_period )
+//			{
+//				/*set the flag of state */
+//				state_flag.action = 1U;
+//				state_flag.alert = 0U;
+//				state_flag.fire1 = 0U;
+//				state_flag.fire2 = 0U;
+//
+//				/* clear the time */
+//				smoke_config_data.action_time = 0U;
+//			}
+//		}
+//	}
+//	else if((smoke_raw_adc >= smoke_config_data.fire_1_threshold) &&		/* check fire1 condition */
+//			(smoke_raw_adc < smoke_config_data.fire_2_threshold))
+//	{
+//		if(0 == smoke_config_data.fire1_time)
+//		{
+//			smoke_config_data.fire1_time = GET_SYS_TIK_VAL;
+//
+//			smoke_config_data.alert_time = 0U;
+//			smoke_config_data.action_time = 0U;
+//			smoke_config_data.fire2_time = 0U;
+//		}
+//		else
+//		{
+//			if((TIME_NOW(smoke_config_data.fire1_time)) > smoke_config_data.fire1_delay_period )
+//			{
+//				/*set the flag of state */
+//				state_flag.fire1 = 1U;
+//				state_flag.alert = 0U;
+//				state_flag.action = 0U;
+//				state_flag.fire2 = 0U;
+//
+//				/* clear the time */
+//				smoke_config_data.fire1_time = 0U;
+//			}
+//		}
+//	}
+//	else if((smoke_raw_adc >= smoke_config_data.fire_2_threshold) &&		/* check fire2 condition */
+//			(smoke_raw_adc < smoke_config_data.fault_threshold))
+//	{
+//		if(0 == smoke_config_data.fire2_time)
+//		{
+//			smoke_config_data.fire2_time = GET_SYS_TIK_VAL;
+//
+//			smoke_config_data.alert_time = 0U;
+//			smoke_config_data.action_time = 0U;
+//			smoke_config_data.fire1_time = 0U;
+//		}
+//		else
+//		{
+//			if((TIME_NOW(smoke_config_data.fire2_time)) > smoke_config_data.fire2_delay_period )
+//			{
+//				/*set the flag of state */
+//				state_flag.fire2 = 1U;
+//				state_flag.alert = 0U;
+//				state_flag.action = 0U;
+//				state_flag.fire1 = 0U;
+//
+//				/* clear the time */
+//				smoke_config_data.fire2_time = 0U;
+//			}
+//		}
+//	}
+//	else
+//	{
+//		/* clear all flags if required */
+//
+//		/*MISRA*/
+//	}
+
+	return ret;
+}
+#endif
+
+APP_StatusTypeDef smoke_config_init(SMOKE_CONFIG *config_data)
+{
+	APP_StatusTypeDef ret = Board_OK;
+	uint8_t config_flag = 0U;
+//	config_flag = 0xFF; // only for testing purpose
+	SPI_EEPROM_Write ( EEPROM_COFIG_FLAG_ADD, &config_flag, 1);
+
+	if(config_data != NULL)
+	{
+		/*read config flag from EEPROM and check if != 0x55 then config default settings */
+		SPI_EEPROM_Read ( EEPROM_COFIG_FLAG_ADD, &config_flag, 1);
+
+		if(config_flag != CONFIG_FLAG_DEFAULT_VAL)
+		{
+			ret = smoke_default_offset ( );
+			if(ret == Board_OK)
+			{
+				/* wait for clean the smoke chamber*/
+//				DELAY_MS_HAL(CONFIG_DELAY);
+				ret = alert_offset ( );
+				if(ret == Board_OK)
+				{
+					/* wait for clean the smoke chamber*/
+//					DELAY_MS_HAL(CONFIG_DELAY);
+					ret = fire1_offset();
+					if(ret == Board_OK)
+					{
+						/* wait for clean the smoke chamber*/
+//						DELAY_MS_HAL(CONFIG_DELAY);
+						ret = fire2_offset();
+						if(ret == Board_OK)
+						{
+							/* set default delay period of all stages */
+							/* Alert delay period */
+							config_data->alert_delay_period = SET_DELAY_PERIOD(ALERT_DELAY_PERIOD_IN_SEC);
+							/* Action delay period */
+							config_data->action_delay_period = SET_DELAY_PERIOD(ACTION_DELAY_PERIOD_IN_SEC);
+							/* Fire1 delay period */
+							config_data->fire1_delay_period = SET_DELAY_PERIOD(FIRE1_DELAY_PERIOD_IN_SEC);
+							/* Fire2 delay period */
+							config_data->fire2_delay_period = SET_DELAY_PERIOD(FIRE2_DELAY_PERIOD_IN_SEC);
+
+							/* set the value of config flag */
+							config_flag = CONFIG_FLAG_DEFAULT_VAL;
+							/* Write the config value flag in EEPROM */
+							SPI_EEPROM_Write ( EEPROM_COFIG_FLAG_ADD, &config_flag, 1U);
+							/* Write the whole configuration in EEPROM */
+							SPI_EEPROM_Write ( EEPROM_CONFIG_ADD, config_data->smoke_config_byte, SMOKE_CONFIG_BYTE);
+						}
+						else
+						{
+							/*return error*/
+						}
+					}
+					else
+					{
+						/*return error*/
+					}
+				}
+				else
+				{
+					/*return error*/
+				}
+
+			}
+			else
+			{
+				/*return error*/
+			}
+		}
+		else
+		{
+			/*read configuration from EEPROM*/
+			SPI_EEPROM_Read ( EEPROM_CONFIG_ADD, config_data->smoke_config_byte, SMOKE_CONFIG_BYTE);
+		}
+	}
+	else
+	{
+		ret = Invalid_arument;
+	}
+
+	return ret;
+}
+
+APP_StatusTypeDef get_smoke_val (uint16_t *smk_val)
+{
+	APP_StatusTypeDef ret = Board_OK;
+	uint8_t loop_var = 0U;
+	uint16_t adc_val = 0U;
+	set_adc_cahnel(SMOKE_ADC_CH);
+
+	if(smk_val != NULL)
+	{
+		for(loop_var = 0; loop_var < MAX_NO_OF_SAMPLE; loop_var++)
+		{
+			/*Start ADC conversion*/
+			start_adc_convesion();
+			/*Wait for ADC conversion complete*/
+			while(get_adc_EOC_flag() == 0U);
+			/*get the ADC value*/
+			curr_smk_val = smoke_adc_buff[loop_var] = get_adc_val();
+			/*Average the ADC value of the samples*/
+			adc_val = smoke_adc_buff[loop_var] + adc_val;
+			/*Stop ADC conversion*/
+			stop_adc_convesion();
+		}
+		*smk_val = adc_val/MAX_NO_OF_SAMPLE;
+#ifdef DEBUG
+		/*Transmit the ADC value on UART*/
+//		UART1_PRINT("Smoke ADC %d",*smk_val);
+//		lcd16x2_clear( );
+//		lcd16x2_printf("Smoke = %d",*smk_val);
+#endif
+	}
+	else
+	{
+		ret = Invalid_arument;
+	}
+	return ret;
+}
+
+APP_StatusTypeDef alert_offset ( )
+{
+	APP_StatusTypeDef ret = Board_OK;
+	uint32_t tickstart = 0U;
+	uint32_t wait = ALERT_OFFSET_TIME_IN_SEC;
+	uint16_t adc_value = 0U;
+	uint16_t adc_alert_sample[ADC_ALERT_SAMPLE] = {0U};
+	uint16_t cnt = 0U;
+	uint32_t pre_duty_cycle = 0U;
+	uint32_t avg_val = 0U;
+	uint16_t idx = 0U;
+
+	/* set smoke ADC channel */
+	set_adc_cahnel(SMOKE_ADC_CH);
+
+	/* get the previous duty cycle */
+	pre_duty_cycle = get_TMR3_compare();
+
+	/* set fan speed at 50% for now*/
+	set_TMR3_compare (90); /* set the duty cycle 50% */
+
+	/* take pre samples of ADC before the actual smoke enters */
+	for(cnt = 0U; cnt < PRE_ADC_SAMPLES; cnt++)
+	{
+		/* Get raw ADC value of smoke */
+		ret = get_smoke_val (&adc_value);
+		if(ret != Board_OK)
+		{
+			/*if get the error from get_smoke_val() return the error , print the error and break the loop*/
+			break;
+		}
+		else
+		{
+			adc_alert_sample[cnt] = adc_value;
+		}
+	}
+
+	/* Activate ACtion relay */
+	grly_data[0] = grly_data[0] | SET_RESET_BIT(e_ACTION_RELAY, ACTIVATE);
+	ret = Shift_reg_data_Tx (grly_data, NO_OF_RELAY_SHIFT_REG, RLY_SHIFT_REG);
+	if(ret == Board_OK )
+	{
+		/*get sys tick*/
+		tickstart = GET_SYS_TIK_VAL;
+
+		/*check time is less than maximum delay */
+		if (wait < HAL_MAX_DELAY)
+		{
+			wait += (uint32_t)(uwTickFreq);
+		}
+
+		/* Now take samples after activate the smoke arosole */
+		while((TIME_NOW(tickstart) < wait) && (cnt < ADC_ALERT_SAMPLE))
+		{
+			/* Get raw ADC value of smoke */
+			ret = get_smoke_val (&adc_value);
+			if(ret != Board_OK)
+			{
+				/*if get the error from get_smoke_val() return the error , print the error and break the loop*/
+				break;
+			}
+			else
+			{
+				adc_alert_sample[cnt] = adc_value;
+			}
+			cnt++;
+		}
+
+		if(ret == Board_OK)
+		{
+			sort_adc_sapmles(adc_alert_sample , cnt);
+		}
+	}
+	/* Deactivate ACtion relay */
+	grly_data[0] = grly_data[0] | (SET_RESET_BIT(e_ACTION_RELAY, DEACTIVATE));
+	ret = Shift_reg_data_Tx (grly_data, NO_OF_RELAY_SHIFT_REG, RLY_SHIFT_REG);
+
+	/*set previous duty cycle */
+	set_TMR3_compare (pre_duty_cycle);
+
+	for(idx = (cnt - ALERT_AVG_SAMPLE_CNT); idx < cnt; idx++)
+	{
+		avg_val = avg_val + adc_alert_sample[idx];
+	}
+	avg_val = avg_val/ALERT_AVG_SAMPLE_CNT;
+
+	smoke_config_data.alert_threshold = avg_val;
+
+	return ret;
+}
+
+APP_StatusTypeDef fire1_offset ( )
+{
+	APP_StatusTypeDef ret = Board_OK;
+	uint32_t tickstart = 0U;
+	uint32_t wait = FIRE1_OFFSET_TIME_IN_SEC;
+	uint16_t adc_value = 0U;
+	uint16_t adc_fire1_sample[ADC_FIRE1_SAMPLE] = {0U};
+	uint16_t cnt = 0U;
+	uint32_t pre_duty_cycle = 0U;
+	uint32_t avg_val = 0U;
+	uint16_t idx = 0U;
+
+	/* set smoke ADC channel */
+	set_adc_cahnel(SMOKE_ADC_CH);
+
+	/* get the previous duty cycle */
+	pre_duty_cycle = get_TMR3_compare();
+
+	/* set fan speed at 50% for now*/
+	set_TMR3_compare (90); /* set the duty cycle 50% */
+
+	/* take pre samples of ADC before the actual smoke enters */
+	for(cnt = 0U; cnt < PRE_ADC_SAMPLES; cnt++)
+	{
+		/* Get raw ADC value of smoke */
+		ret = get_smoke_val (&adc_value);
+		if(ret != Board_OK)
+		{
+			/*if get the error from get_smoke_val() return the error , print the error and break the loop*/
+			break;
+		}
+		else
+		{
+			adc_fire1_sample[cnt] = adc_value;
+		}
+	}
+
+	/* Activate ACtion relay */
+	grly_data[0] = grly_data[0] | SET_RESET_BIT(e_ACTION_RELAY, ACTIVATE);
+	ret = Shift_reg_data_Tx (grly_data, NO_OF_RELAY_SHIFT_REG, RLY_SHIFT_REG);
+	if(ret == Board_OK )
+	{
+		/*get sys tick*/
+		tickstart = GET_SYS_TIK_VAL;
+
+		/*check time is less than maximum delay */
+		if (wait < HAL_MAX_DELAY)
+		{
+			wait += (uint32_t)(uwTickFreq);
+		}
+
+		/* Now take samples after activate the smoke arosole */
+		while((TIME_NOW(tickstart) < wait) && (cnt < ADC_FIRE1_SAMPLE))
+		{
+			/* Get raw ADC value of smoke */
+			ret = get_smoke_val (&adc_value);
+			if(ret != Board_OK)
+			{
+				/*if get the error from get_smoke_val() return the error , print the error and break the loop*/
+				break;
+			}
+			else
+			{
+				adc_fire1_sample[cnt] = adc_value;
+			}
+			cnt++;
+		}
+
+		if(ret == Board_OK)
+		{
+			sort_adc_sapmles(adc_fire1_sample , cnt);
+		}
+	}
+	/* Deactivate ACtion relay */
+	grly_data[0] = grly_data[0] | (SET_RESET_BIT(e_ACTION_RELAY, DEACTIVATE));
+	ret = Shift_reg_data_Tx (grly_data, NO_OF_RELAY_SHIFT_REG, RLY_SHIFT_REG);
+
+	/*set previous duty cycle */
+	set_TMR3_compare (pre_duty_cycle);
+
+	for(idx = (cnt - FIRE1_AVG_SAMPLE_CNT); idx < cnt; idx++)
+	{
+		avg_val = avg_val + adc_fire1_sample[idx];
+	}
+	avg_val = avg_val/FIRE1_AVG_SAMPLE_CNT;
+
+	smoke_config_data.fire_1_threshold = avg_val;
+
+	return ret;
+}
+
+APP_StatusTypeDef fire2_offset ( )
+{
+	APP_StatusTypeDef ret = Board_OK;
+	uint32_t tickstart = 0U;
+	uint32_t wait = FIRE1_OFFSET_TIME_IN_SEC;
+	uint16_t adc_value = 0U;
+	uint16_t adc_fire2_sample[ADC_FIRE2_SAMPLE] = {0U};
+	uint16_t cnt = 0U;
+	uint32_t pre_duty_cycle = 0U;
+	uint32_t avg_val = 0U;
+	uint16_t idx = 0U;
+
+	/* set smoke ADC channel */
+	set_adc_cahnel(SMOKE_ADC_CH);
+
+	/* get the previous duty cycle */
+	pre_duty_cycle = get_TMR3_compare();
+
+	/* set fan speed at 50% for now*/
+	set_TMR3_compare (90); /* set the duty cycle 50% */
+
+	/* take pre samples of ADC before the actual smoke enters */
+	for(cnt = 0U; cnt < PRE_ADC_SAMPLES; cnt++)
+	{
+		/* Get raw ADC value of smoke */
+		ret = get_smoke_val (&adc_value);
+		if(ret != Board_OK)
+		{
+			/*if get the error from get_smoke_val() return the error , print the error and break the loop*/
+			break;
+		}
+		else
+		{
+			adc_fire2_sample[cnt] = adc_value;
+		}
+	}
+
+	/* Activate ACtion relay */
+	grly_data[0] = grly_data[0] | SET_RESET_BIT(e_ACTION_RELAY, ACTIVATE);
+	ret = Shift_reg_data_Tx (grly_data, NO_OF_RELAY_SHIFT_REG, RLY_SHIFT_REG);
+	if(ret == Board_OK )
+	{
+		/*get sys tick*/
+		tickstart = GET_SYS_TIK_VAL;
+
+		/*check time is less than maximum delay */
+		if (wait < HAL_MAX_DELAY)
+		{
+			wait += (uint32_t)(uwTickFreq);
+		}
+
+		/* Now take samples after activate the smoke arosole */
+		while((TIME_NOW(tickstart) < wait) && (cnt < ADC_FIRE2_SAMPLE))
+		{
+			/* Get raw ADC value of smoke */
+			ret = get_smoke_val (&adc_value);
+			if(ret != Board_OK)
+			{
+				/*if get the error from get_smoke_val() return the error , print the error and break the loop*/
+				break;
+			}
+			else
+			{
+				adc_fire2_sample[cnt] = adc_value;
+			}
+			cnt++;
+		}
+
+		if(ret == Board_OK)
+		{
+			sort_adc_sapmles(adc_fire2_sample , cnt);
+		}
+	}
+	/* Deactivate ACtion relay */
+	grly_data[0] = grly_data[0] | (SET_RESET_BIT(e_ACTION_RELAY, DEACTIVATE));
+	ret = Shift_reg_data_Tx (grly_data, NO_OF_RELAY_SHIFT_REG, RLY_SHIFT_REG);
+
+	/*set previous duty cycle */
+	set_TMR3_compare (pre_duty_cycle);
+
+	for(idx = (cnt - FIRE1_AVG_SAMPLE_CNT); idx < cnt; idx++)
+	{
+		avg_val = avg_val + adc_fire2_sample[idx];
+	}
+	avg_val = avg_val/FIRE2_AVG_SAMPLE_CNT;
+
+	smoke_config_data.fire_2_threshold = avg_val;
+
+	return ret;
+}
+
+APP_StatusTypeDef smoke_default_offset ( )
+{
+	APP_StatusTypeDef ret = Board_OK;
+	uint16_t adc_value = 0U;
+	uint16_t adc_sample[ADC_CALIBRATION_SAMPLE_MAX] = {0U};
+
+	uint32_t pre_duty_cycle = 0U;
+//	uint16_t adc_avg_val[ADC_AVG_SAMPLE_MAX] = {0U};
+//	uint32_t time_now = 0U;
+//	uint32_t time_start = 0U;
+	uint32_t idx = 0U;
+
+
+//	time_start = GET_SYS_TIK_VAL;
+	set_adc_cahnel(SMOKE_ADC_CH);
+
+	/*start timer for 1 min*/
+	pre_duty_cycle = get_TMR3_compare();
+	set_TMR3_compare (181); /* set the duty cycle 100% for full speed */
+	for(idx = 0U; idx < ADC_CALIBRATION_SAMPLE_MAX; idx++)
+	{
+		/* Get raw ADC value of smoke */
+		ret = get_smoke_val (&adc_value);
+		if(ret != Board_OK)
+		{
+			/*if get the error from get_smoke_val() return the error , print the error and break the loop*/
+			break;
+		}
+		else
+		{
+			adc_sample[idx] = adc_value;
+		}
+
+	}
+	sort_adc_sapmles(adc_sample , (idx));
+	set_smk_offset (adc_sample);
+	set_TMR3_compare(pre_duty_cycle);
+	return ret;
+}
+
+
+APP_StatusTypeDef sort_adc_sapmles(uint16_t *adc_samples , uint16_t size)
+{
+	APP_StatusTypeDef ret = Board_OK;
+    uint16_t i, j, min_idx;
+    uint16_t temp = 0U;
+
+    if(adc_samples != NULL)
+    {
+		for (i = 0; i < (size - 1); i++)
+		{
+			/* Find the minimum element in */
+			min_idx = i;
+			for (j = (i + 1); j < size; j++)
+			{
+				if (adc_samples[j] < adc_samples[min_idx])
+					min_idx = j;
+			}
+
+			/* Swap the found minimum element with the first element*/
+			temp = adc_samples[min_idx];
+			adc_samples[min_idx] = adc_samples[i];
+			adc_samples[i] = temp;
+		}
+    }
+    else
+    {
+    	ret = Invalid_arument;
+    }
+    return ret;
+}
+
+
+APP_StatusTypeDef set_smk_offset (uint16_t *adc_samples)
+{
+	APP_StatusTypeDef ret = Board_OK;
+	uint16_t idx = 0U;
+	uint32_t smk_avg_val = 0U;
+
+	if(adc_samples != NULL)
+	{
+		/*average the lower 5 values for lower band*/
+		for(idx = 0U; idx < LOWER_OFFSET_AVG; idx++)
+		{
+			smk_avg_val = smk_avg_val + adc_samples[idx];
+		}
+		smk_avg_val = smk_avg_val/LOWER_OFFSET_AVG;
+		/* Set the default value of lower band*/
+		smoke_config_data.smk_lower_dflt_offset = (uint16_t)smk_avg_val;
+//		smoke_config_data.smk_default_offset[0] = (uint16_t)smk_avg_val;
+		/*average the higher 5 values for higher band*/
+		smk_avg_val = 0U;
+		for(idx = (ADC_CALIBRATION_SAMPLE_MAX - (UPPER_OFFSET_AVG)); idx < (ADC_CALIBRATION_SAMPLE_MAX ); idx++)
+		{
+			smk_avg_val = smk_avg_val + adc_samples[idx];
+		}
+		smk_avg_val = smk_avg_val/LOWER_OFFSET_AVG;
+		smoke_config_data.smk_higher_dflt_offset = (uint16_t)smk_avg_val;
+	}
+	else
+	{
+		ret = Invalid_arument;
+	}
+	return ret;
+
+}
+

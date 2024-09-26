@@ -1,0 +1,17 @@
+12:35:22 **** Incremental Build of configuration Debug for project STM32F301C8TX PWM and GPIO init ****
+make -j8 all 
+arm-none-eabi-gcc -o "STM32F301C8TX PWM and GPIO init.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\STM32_CubeIDE_Workspace\PWM and GPIO init\STM32F301C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32F301C8TX PWM and GPIO init.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+C:/ST/STM32CubeIDE_1.4.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.12.3.rel1.win32_1.0.200.202406191623/tools/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/bin/ld.exe: warning: STM32F301C8TX PWM and GPIO init.elf has a LOAD segment with RWX permissions
+Finished building target: STM32F301C8TX PWM and GPIO init.elf
+ 
+arm-none-eabi-size  STM32F301C8TX\ PWM\ and\ GPIO\ init.elf 
+arm-none-eabi-objdump -h -S STM32F301C8TX\ PWM\ and\ GPIO\ init.elf  > "STM32F301C8TX PWM and GPIO init.list"
+   text	   data	    bss	    dec	    hex	filename
+  12368	     20	   1644	  14032	   36d0	STM32F301C8TX PWM and GPIO init.elf
+Finished building: default.size.stdout
+ 
+Finished building: STM32F301C8TX PWM and GPIO init.list
+ 
+
+12:35:22 Build Finished. 0 errors, 1 warnings. (took 776ms)
+

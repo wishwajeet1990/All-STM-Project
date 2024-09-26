@@ -34,34 +34,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := Use GPIO
+BUILD_ARTIFACT_NAME := STM32F301C8TX toggle GPIO
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-Use\ GPIO.elf \
+STM32F301C8TX\ toggle\ GPIO.elf \
 
 MAP_FILES += \
-Use\ GPIO.map \
+STM32F301C8TX\ toggle\ GPIO.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-Use\ GPIO.list \
+STM32F301C8TX\ toggle\ GPIO.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: Use\ GPIO.elf secondary-outputs
+main-build: STM32F301C8TX\ toggle\ GPIO.elf secondary-outputs
 
 # Tool invocations
-Use\ GPIO.elf Use\ GPIO.map: $(OBJS) $(USER_OBJS) D:\STM32_CubeIDE_Workspace\Use\ GPIO\STM32F301C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Use GPIO.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\STM32_CubeIDE_Workspace\Use GPIO\STM32F301C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Use GPIO.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+STM32F301C8TX\ toggle\ GPIO.elf STM32F301C8TX\ toggle\ GPIO.map: $(OBJS) $(USER_OBJS) D:\STM32_CubeIDE_Workspace\Use\ GPIO\STM32F301C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "STM32F301C8TX toggle GPIO.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\STM32_CubeIDE_Workspace\Use GPIO\STM32F301C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32F301C8TX toggle GPIO.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -70,14 +70,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Use\ GPIO.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Use GPIO.list"
+STM32F301C8TX\ toggle\ GPIO.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "STM32F301C8TX toggle GPIO.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) Use\ GPIO.elf Use\ GPIO.list Use\ GPIO.map Use\\ GPIO.elf default.size.stdout
+	-$(RM) STM32F301C8TX\ toggle\ GPIO.elf STM32F301C8TX\ toggle\ GPIO.list STM32F301C8TX\ toggle\ GPIO.map STM32F301C8TX\\ toggle\\ GPIO.elf default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)

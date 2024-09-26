@@ -62,7 +62,6 @@ static void MX_ADC1_Init(void);
   * @brief  The application entry point.
   * @retval int
   */
-uint32_t Adc_Val;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -99,13 +98,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  HAL_ADC_Start(&hadc); // Start ADC conversion
-      HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY); // Wait for conversion to complete
-	  Adc_Val = HAL_ADC_GetValue(&hadc1);// Read ADC value
-      HAL_ADC_Stop(&hadc); // Stop ADC conversion
+
+
+
   }
   /* USER CODE END 3 */
-  return 0;
 }
 
 /**
